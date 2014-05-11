@@ -31,16 +31,7 @@ module Sensu
         @failures
       end
 
-      # Validate a Sensu check definition.
-      #
-      # @param check [Object] sensu check definition (hash).
-      def validate_check(check)
-        must_be_a_string(check[:name]) ||
-          invalid(check, "check name must be a string")
-        must_match_regex(/^[\w\.-]+$/, check[:name]) ||
-          invalid(check, "check name cannot contain spaces or special characters")
-        must_be_a_string(check[:command]) ||
-          invalid(check, "check command must be a string")
+      def validate_check_scheduling(check)
         (must_be_an_integer(check[:interval]) && check[:interval] > 0) ||
           invalid(check, "check interval must be an integer")
         must_be_boolean_if_set(check[:standalone]) ||
@@ -53,8 +44,9 @@ module Sensu
             invalid(check, "check subscribers must be an array")
           end
         end
-        must_be_a_numeric_if_set(check[:timeout]) ||
-          invalid(check, "check timeout must be numeric")
+      end
+
+      def validate_check_handling(check)
         must_be_a_string_if_set(check[:handler]) ||
           invalid(check, "check handler must be a string")
         must_be_an_array_if_set(check[:handlers]) ||
@@ -63,13 +55,32 @@ module Sensu
           items_must_be_strings(check[:handlers]) ||
             invalid(check, "check handlers must each be a string")
         end
+      end
+
+      def validate_check_flap_detection(check)
         if check[:low_flap_threshold] || check[:high_flap_threshold]
           must_be_an_integer(check[:low_flap_threshold]) ||
             invalid(check, "check low flap threshold must be an integer")
           must_be_an_integer(check[:high_flap_threshold]) ||
             invalid(check, "check high flap threshold must be an integer")
         end
-        #validate_subdue('check', check) if check[:subdue]
+      end
+
+      # Validate a Sensu check definition.
+      #
+      # @param check [Object] sensu check definition (hash).
+      def validate_check(check)
+        must_be_a_string(check[:name]) ||
+          invalid(check, "check name must be a string")
+        must_match_regex(/^[\w\.-]+$/, check[:name]) ||
+          invalid(check, "check name cannot contain spaces or special characters")
+        must_be_a_string(check[:command]) ||
+          invalid(check, "check command must be a string")
+        must_be_a_numeric_if_set(check[:timeout]) ||
+          invalid(check, "check timeout must be numeric")
+        validate_check_scheduling(check)
+        validate_check_handling(check)
+        validate_check_flap_detection(check)
       end
 
       private
