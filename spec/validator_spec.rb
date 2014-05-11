@@ -20,6 +20,7 @@ describe "Sensu::Settings::Validator" do
     reasons.should include("filters must be a hash")
     reasons.should include("mutators must be a hash")
     reasons.should include("handlers must be a hash")
+    reasons.size.should eq(4)
   end
 
   it "can validate an empty check definition" do
@@ -30,6 +31,8 @@ describe "Sensu::Settings::Validator" do
     reasons.should include("check name must be a string")
     reasons.should include("check name cannot contain spaces or special characters")
     reasons.should include("check command must be a string")
-    reasons.should include("check is missing interval")
+    reasons.should include("check interval must be an integer")
+    reasons.should include("check subscribers must be an array")
+    reasons.size.should eq(5)
   end
 end

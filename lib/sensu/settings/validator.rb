@@ -16,32 +16,19 @@ module Sensu
 
       # Run the validator.
       #
-      # @param settings [Hash] settings to validate.
+      # @param settings [Hash] sensu settings to validate.
       # @return [Array] validation failures.
       def run(settings)
         CATEGORIES.each do |category|
-          must_be_a_hash(settings[category]) ||
-            invalid(settings[category], "#{category} must be a hash")
           if is_a_hash?(settings[category])
             settings[category].each do |object|
               send(("validate_" + category.to_s.chop).to_sym, object)
             end
+          else
+            invalid(settings[category], "#{category} must be a hash")
           end
         end
         @failures
-      end
-
-      # Record an invalid object with a message.
-      #
-      # @param object [Object] invalid object.
-      # @param message [String] message explaining why the object is
-      #   invalid.
-      # @return [Array] current validation failures.
-      def invalid(object, message)
-        @failures << {
-          :object => object,
-          :message => message
-        }
       end
 
       # Validate a Sensu check definition.
@@ -55,7 +42,49 @@ module Sensu
         must_be_a_string(check[:command]) ||
           invalid(check, "check command must be a string")
         (must_be_an_integer(check[:interval]) && check[:interval] > 0) ||
-          invalid(check, "check is missing interval")
+          invalid(check, "check interval must be an integer")
+        must_be_boolean_if_set(check[:standalone]) ||
+          invalid(check, "check standalone must be boolean")
+        unless check[:standalone]
+          if is_an_array?(check[:subscribers])
+            items_must_be_strings(check[:subscribers]) ||
+              invalid(check, "check subscribers must each be a string")
+          else
+            invalid(check, "check subscribers must be an array")
+          end
+        end
+        must_be_a_numeric_if_set(check[:timeout]) ||
+          invalid(check, "check timeout must be numeric")
+        must_be_a_string_if_set(check[:handler]) ||
+          invalid(check, "check handler must be a string")
+        must_be_an_array_if_set(check[:handlers]) ||
+          invalid(check, "check handlers must be an array")
+        if is_an_array?(check[:handlers])
+          items_must_be_strings(check[:handlers]) ||
+            invalid(check, "check handlers must each be a string")
+        end
+        if check[:low_flap_threshold] || check[:high_flap_threshold]
+          must_be_an_integer(check[:low_flap_threshold]) ||
+            invalid(check, "check low flap threshold must be an integer")
+          must_be_an_integer(check[:high_flap_threshold]) ||
+            invalid(check, "check high flap threshold must be an integer")
+        end
+        #validate_subdue('check', check) if check[:subdue]
+      end
+
+      private
+
+      # Record an invalid object with a message.
+      #
+      # @param object [Object] invalid object.
+      # @param message [String] message explaining why the object is
+      #   invalid.
+      # @return [Array] current validation failures.
+      def invalid(object, message)
+        @failures << {
+          :object => object,
+          :message => message
+        }
       end
     end
   end
