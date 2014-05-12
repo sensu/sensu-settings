@@ -23,9 +23,9 @@ module Sensu
       def run(settings)
         CATEGORIES.each do |category|
           if is_a_hash?(settings[category])
+            validate_method = ("validate_" + category.to_s.chop).to_sym
             settings[category].each do |name, details|
-              object = details.merge(:name => name.to_s)
-              send(("validate_" + category.to_s.chop).to_sym, object)
+              send(validate_method, details.merge(:name => name.to_s))
             end
           else
             invalid(settings[category], "#{category} must be a hash")
