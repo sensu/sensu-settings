@@ -5,19 +5,24 @@ module Sensu
         # Validate subdue time.
         # Validates: begin, end
         #
-        # @param definition [Object] sensu definition (hash).
-        def validate_subdue_time(definition)
-          subdue = definition[:subdue]
-          if either_are_set?(subdue[:begin], subdue[:end])
-            must_be_time(subdue[:begin], subdue[:end]) ||
-              invalid(definition, "subdue begin and end times must be valid")
+        # @param scope [String] definition scope to report under.
+        # @param definition [Hash] sensu definition.
+        # @param object [Hash] to have begin and end validated.
+        def validate_subdue_time(scope, definition, object)
+          if is_a_hash?(object)
+            if either_are_set?(object[:begin], object[:end])
+              must_be_time(object[:begin], object[:end]) ||
+                invalid(definition, "#{scope} begin and end times must be valid")
+            end
+          else
+            invalid(definition, "#{scope} must be a hash")
           end
         end
 
         # Validate subdue days.
         # Validates: days
         #
-        # @param definition [Object] sensu definition (hash).
+        # @param definition [Hash] sensu definition.
         def validate_subdue_days(definition)
           subdue = definition[:subdue]
           must_be_an_array_if_set(subdue[:days]) ||
@@ -32,36 +37,27 @@ module Sensu
         # Validate subdue exceptions.
         # Validates: exceptions (begin, end)
         #
-        # @param definition [Object] sensu definition (hash).
+        # @param definition [Hash] sensu definition.
         def validate_subdue_exceptions(definition)
           subdue = definition[:subdue]
           must_be_an_array_if_set(subdue[:exceptions]) ||
             invalid(definition, "subdue exceptions must be an array")
           if is_an_array?(subdue[:exceptions])
             subdue[:exceptions].each do |exception|
-              must_be_a_hash(exception) ||
-                invalid(definition, "subdue exceptions must each be a hash")
-              if is_a_hash?(exception)
-                if either_are_set?(exception[:begin], exception[:end])
-                  must_be_time(exception[:begin], exception[:end]) ||
-                    invalid(definition, "subdue exception begin and end times must be valid")
-                end
-              end
+              validate_subdue_time("subdue exceptions", definition, exception)
             end
           end
         end
 
         # Validate Sensu subdue, for either a check or handler definition.
         #
-        # @param definition [Object] sensu definition (hash).
+        # @param definition [Hash] sensu definition.
         def validate_subdue(definition)
           subdue = definition[:subdue]
-          must_be_a_hash(subdue) ||
-            invalid(definition, "subdue must be a hash")
+          validate_subdue_time("subdue", definition, subdue)
           if is_a_hash?(subdue)
             must_be_either_if_set(%w[handler publisher], subdue[:at]) ||
               invalid(definition, "subdue at must be either handler or publisher")
-            validate_subdue_time(definition)
             validate_subdue_days(definition)
             validate_subdue_exceptions(definition)
           end
