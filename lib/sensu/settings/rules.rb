@@ -24,7 +24,7 @@ module Sensu
       # @param value [Object] to check.
       # @return [TrueClass, FalseClass]
       def must_be_an_array_if_set(value)
-        value.nil? ? true : value.is_a?(Array)
+        value.nil? ? true : must_be_an_array(value)
       end
 
       # Check that a value is a string.
@@ -40,7 +40,7 @@ module Sensu
       # @param value [Object] to check.
       # @return [TrueClass, FalseClass]
       def must_be_a_string_if_set(value)
-        value.nil? ? true : value.is_a?(String)
+        value.nil? ? true : must_be_a_string(value)
       end
 
       # Check that a value is an integer.
@@ -64,7 +64,7 @@ module Sensu
       # @param value [Object] to check.
       # @return [TrueClass, FalseClass]
       def must_be_a_numeric_if_set(value)
-        value.nil? ? true : value.is_a?(Numeric)
+        value.nil? ? true : must_be_a_numeric(value)
       end
 
       # Check that a value matches a regular expression.
@@ -92,6 +92,46 @@ module Sensu
         value.all? do |item|
           item.is_a?(String) && !item.empty?
         end
+      end
+
+      # Check if either of the values are set (not nil).
+      #
+      # @param values [Array<Object>] to check if not nil.
+      # @return [TrueClass, FalseClass]
+      def either_are_set?(*values)
+        values.any? do |value|
+          !value.nil?
+        end
+      end
+
+      # Check if values are valid times (can be parsed).
+      #
+      # @param values [Array<Object>] to check if valid time.
+      # @return [TrueClass, FalseClass]
+      def must_be_time(*values)
+        values.all? do |value|
+          Time.parse(value) rescue false
+        end
+      end
+
+      # Check if values are allowed.
+      #
+      # @param allowed [Array<Object>] allowed values.
+      # @param values [Array<Object>] to check if allowed.
+      # @return [TrueClass, FalseClass]
+      def must_be_either(allowed, *values)
+        values.flatten.all? do |value|
+          allowed.include?(value)
+        end
+      end
+
+      # Check if values are allowed, if set (not nil).
+      #
+      # @param allowed [Array<Object>] allowed values.
+      # @param values [Array<Object>] to check if allowed.
+      # @return [TrueClass, FalseClass]
+      def must_be_either_if_set(allowed, *values)
+        values[0].nil? ? true : must_be_either(allowed, values)
       end
     end
   end

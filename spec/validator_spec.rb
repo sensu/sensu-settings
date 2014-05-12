@@ -39,75 +39,127 @@ describe "Sensu::Settings::Validator" do
   it "can validate a check definition" do
     check = {:name => "foo bar"}
     @validator.validate_check(check)
-    @validator.failures.size.should eq(4)
-    @validator.reset!
+    @validator.reset.should eq(4)
     check[:name] = "foo"
     @validator.validate_check(check)
-    @validator.failures.size.should eq(3)
-    @validator.reset!
+    @validator.reset.should eq(3)
     check[:command] = 1
     @validator.validate_check(check)
-    @validator.failures.size.should eq(3)
-    @validator.reset!
+    @validator.reset.should eq(3)
     check[:command] = "true"
     @validator.validate_check(check)
-    @validator.failures.size.should eq(2)
-    @validator.reset!
+    @validator.reset.should eq(2)
     check[:interval] = "1"
     @validator.validate_check(check)
-    @validator.failures.size.should eq(2)
-    @validator.reset!
+    @validator.reset.should eq(2)
     check[:interval] = 1
     @validator.validate_check(check)
-    @validator.failures.size.should eq(1)
-    @validator.reset!
+    @validator.reset.should eq(1)
     check[:subscribers] = 1
     @validator.validate_check(check)
-    @validator.failures.size.should eq(1)
-    @validator.reset!
+    @validator.reset.should eq(1)
+    check[:subscribers] = [1]
+    @validator.validate_check(check)
+    @validator.reset.should eq(1)
     check[:subscribers] = []
     @validator.validate_check(check)
-    @validator.failures.size.should eq(0)
-    @validator.reset!
+    @validator.reset.should eq(0)
     check[:standalone] = "true"
     @validator.validate_check(check)
-    @validator.failures.size.should eq(1)
-    @validator.reset!
+    @validator.reset.should eq(1)
     check[:standalone] = true
     @validator.validate_check(check)
-    @validator.failures.size.should eq(0)
-    @validator.reset!
+    @validator.reset.should eq(0)
     check[:handler] = 1
     @validator.validate_check(check)
-    @validator.failures.size.should eq(1)
-    @validator.reset!
+    @validator.reset.should eq(1)
     check[:handler] = "cat"
     @validator.validate_check(check)
-    @validator.failures.size.should eq(0)
-    @validator.reset!
+    @validator.reset.should eq(0)
     check[:handlers] = "cat"
     @validator.validate_check(check)
-    @validator.failures.size.should eq(1)
-    @validator.reset!
+    @validator.reset.should eq(1)
     check[:handlers] = ["cat"]
     @validator.validate_check(check)
-    @validator.failures.size.should eq(0)
-    @validator.reset!
+    @validator.reset.should eq(0)
     check[:low_flap_threshold] = "25"
     @validator.validate_check(check)
-    @validator.failures.size.should eq(2)
-    @validator.reset!
+    @validator.reset.should eq(2)
     check[:low_flap_threshold] = 25
     @validator.validate_check(check)
-    @validator.failures.size.should eq(1)
-    @validator.reset!
+    @validator.reset.should eq(1)
     check[:high_flap_threshold] = "55"
     @validator.validate_check(check)
-    @validator.failures.size.should eq(1)
-    @validator.reset!
+    @validator.reset.should eq(1)
     check[:high_flap_threshold] = 55
     @validator.validate_check(check)
-    @validator.failures.size.should eq(0)
-    @validator.reset!
+    @validator.reset.should eq(0)
+  end
+
+  it "can validate check subdue" do
+    check = {
+      :name => "foo",
+      :command => "true",
+      :interval => 1,
+      :standalone => true
+    }
+    @validator.validate_check(check)
+    @validator.reset.should eq(0)
+    check[:subdue] = true
+    @validator.validate_check(check)
+    @validator.reset.should eq(1)
+    check[:subdue] = {
+      :at => "unknown"
+    }
+    @validator.validate_check(check)
+    @validator.reset.should eq(1)
+    check[:subdue][:at] = "publisher"
+    @validator.validate_check(check)
+    @validator.reset.should eq(0)
+    check[:subdue][:at] = "handler"
+    @validator.validate_check(check)
+    @validator.reset.should eq(0)
+    check[:subdue][:begin] = "14:30"
+    check[:subdue][:end] = 1
+    @validator.validate_check(check)
+    @validator.reset.should eq(1)
+    check[:subdue][:begin] = 1
+    check[:subdue][:end] = "14:30"
+    @validator.validate_check(check)
+    @validator.reset.should eq(1)
+    check[:subdue][:begin] = "14:30"
+    check[:subdue][:end] = "16:30"
+    @validator.validate_check(check)
+    @validator.reset.should eq(0)
+    check[:subdue][:days] = 1
+    @validator.validate_check(check)
+    @validator.reset.should eq(1)
+    check[:subdue][:days] = ["unknown"]
+    @validator.validate_check(check)
+    @validator.reset.should eq(1)
+    check[:subdue][:days] = [true]
+    @validator.validate_check(check)
+    @validator.reset.should eq(1)
+    check[:subdue][:days] = ["monday"]
+    @validator.validate_check(check)
+    @validator.reset.should eq(0)
+    check[:subdue][:exceptions] = 1
+    @validator.validate_check(check)
+    @validator.reset.should eq(1)
+    check[:subdue][:exceptions] = []
+    @validator.validate_check(check)
+    @validator.reset.should eq(0)
+    check[:subdue][:exceptions] = [1]
+    @validator.validate_check(check)
+    @validator.reset.should eq(1)
+    check[:subdue][:exceptions] = [{}]
+    @validator.validate_check(check)
+    @validator.reset.should eq(0)
+    check[:subdue][:exceptions] = [{:begin => "15:00"}]
+    @validator.validate_check(check)
+    @validator.reset.should eq(1)
+    check[:subdue][:exceptions] = [{:begin => "15:00", :end => "15:30"}]
+    @validator.validate_check(check)
+    @validator.reset.should eq(0)
   end
 end

@@ -41,7 +41,7 @@ module Sensu
         #
         # @param check [Object] sensu check definition (hash).
         def validate_check_flap_detection(check)
-          if check[:low_flap_threshold] || check[:high_flap_threshold]
+          if either_are_set?(check[:low_flap_threshold], check[:high_flap_threshold])
             must_be_an_integer(check[:low_flap_threshold]) ||
               invalid(check, "check low flap threshold must be an integer")
             must_be_an_integer(check[:high_flap_threshold]) ||
@@ -64,6 +64,9 @@ module Sensu
           validate_check_scheduling(check)
           validate_check_handling(check)
           validate_check_flap_detection(check)
+          if check[:subdue]
+            validate_subdue(check)
+          end
         end
       end
     end

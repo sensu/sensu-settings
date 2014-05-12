@@ -34,8 +34,11 @@ module Sensu
       end
 
       def reset!
+        failure_count = @failures.size
         @failures = []
+        failure_count
       end
+      alias_method :reset, :reset!
 
       private
 
