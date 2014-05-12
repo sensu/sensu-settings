@@ -1,6 +1,7 @@
 # Sensu::Settings
 
 [![Code Climate](https://codeclimate.com/github/portertech/sensu-settings.png)](https://codeclimate.com/github/portertech/sensu-settings)
+[![Code Climate Coverage](https://codeclimate.com/github/portertech/sensu-settings/coverage.png)](https://codeclimate.com/github/portertech/sensu-settings)
 
 ## Installation
 
