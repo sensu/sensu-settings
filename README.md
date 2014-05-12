@@ -1,6 +1,6 @@
 # Sensu::Settings
 
-TODO: Write a gem description
+[![Code Climate](https://codeclimate.com/github/portertech/sensu-settings.png)](https://codeclimate.com/github/portertech/sensu-settings)
 
 ## Installation
 
