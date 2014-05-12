@@ -28,5 +28,9 @@ describe "Sensu::Settings::Rules" do
     must_be_boolean_if_set(false).should be_true
     must_be_boolean_if_set(nil).should be_true
     must_be_boolean_if_set("").should be_false
+    items_must_be_strings([]).should be_true
+    items_must_be_strings(["test"]).should be_true
+    items_must_be_strings([1]).should be_false
+    items_must_be_strings([""]).should be_false
   end
 end

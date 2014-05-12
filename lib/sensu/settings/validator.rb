@@ -33,6 +33,10 @@ module Sensu
         @failures
       end
 
+      def reset!
+        @failures = []
+      end
+
       private
 
       # Record an invalid object with a message.

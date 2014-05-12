@@ -89,7 +89,7 @@ module Sensu
       # @param value [Array] with items to check.
       # @return [TrueClass, FalseClass]
       def items_must_be_strings(value)
-        values.all? do |item|
+        value.all? do |item|
           item.is_a?(String) && !item.empty?
         end
       end

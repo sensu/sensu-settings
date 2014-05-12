@@ -35,4 +35,79 @@ describe "Sensu::Settings::Validator" do
     reasons.should include("check subscribers must be an array")
     reasons.size.should eq(5)
   end
+
+  it "can validate a check definition" do
+    check = {:name => "foo bar"}
+    @validator.validate_check(check)
+    @validator.failures.size.should eq(4)
+    @validator.reset!
+    check[:name] = "foo"
+    @validator.validate_check(check)
+    @validator.failures.size.should eq(3)
+    @validator.reset!
+    check[:command] = 1
+    @validator.validate_check(check)
+    @validator.failures.size.should eq(3)
+    @validator.reset!
+    check[:command] = "true"
+    @validator.validate_check(check)
+    @validator.failures.size.should eq(2)
+    @validator.reset!
+    check[:interval] = "1"
+    @validator.validate_check(check)
+    @validator.failures.size.should eq(2)
+    @validator.reset!
+    check[:interval] = 1
+    @validator.validate_check(check)
+    @validator.failures.size.should eq(1)
+    @validator.reset!
+    check[:subscribers] = 1
+    @validator.validate_check(check)
+    @validator.failures.size.should eq(1)
+    @validator.reset!
+    check[:subscribers] = []
+    @validator.validate_check(check)
+    @validator.failures.size.should eq(0)
+    @validator.reset!
+    check[:standalone] = "true"
+    @validator.validate_check(check)
+    @validator.failures.size.should eq(1)
+    @validator.reset!
+    check[:standalone] = true
+    @validator.validate_check(check)
+    @validator.failures.size.should eq(0)
+    @validator.reset!
+    check[:handler] = 1
+    @validator.validate_check(check)
+    @validator.failures.size.should eq(1)
+    @validator.reset!
+    check[:handler] = "cat"
+    @validator.validate_check(check)
+    @validator.failures.size.should eq(0)
+    @validator.reset!
+    check[:handlers] = "cat"
+    @validator.validate_check(check)
+    @validator.failures.size.should eq(1)
+    @validator.reset!
+    check[:handlers] = ["cat"]
+    @validator.validate_check(check)
+    @validator.failures.size.should eq(0)
+    @validator.reset!
+    check[:low_flap_threshold] = "25"
+    @validator.validate_check(check)
+    @validator.failures.size.should eq(2)
+    @validator.reset!
+    check[:low_flap_threshold] = 25
+    @validator.validate_check(check)
+    @validator.failures.size.should eq(1)
+    @validator.reset!
+    check[:high_flap_threshold] = "55"
+    @validator.validate_check(check)
+    @validator.failures.size.should eq(1)
+    @validator.reset!
+    check[:high_flap_threshold] = 55
+    @validator.validate_check(check)
+    @validator.failures.size.should eq(0)
+    @validator.reset!
+  end
 end
