@@ -1,4 +1,6 @@
 require "rspec"
+require "codeclimate-test-reporter"
 
-module Helpers
-end
+CodeClimate::TestReporter.start
+
+module Helpers; end

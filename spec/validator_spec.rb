@@ -162,4 +162,18 @@ describe "Sensu::Settings::Validator" do
     @validator.validate_check(check)
     @validator.reset.should eq(0)
   end
+
+  it "can run, validating checks" do
+    settings = {
+      :checks => {
+        :foo => {
+          :command => "true",
+          :interval => 1,
+          :standalone => true
+        }
+      }
+    }
+    @validator.run(settings)
+    @validator.reset.should eq(3)
+  end
 end

@@ -23,7 +23,8 @@ module Sensu
       def run(settings)
         CATEGORIES.each do |category|
           if is_a_hash?(settings[category])
-            settings[category].each do |object|
+            settings[category].each do |name, details|
+              object = details.merge(:name => name.to_s)
               send(("validate_" + category.to_s.chop).to_sym, object)
             end
           else
