@@ -5,7 +5,7 @@ module Sensu
         # Validate check scheduling.
         # Validates: interval, standalone, subscribers
         #
-        # @param check [Object] sensu check definition (hash).
+        # @param check [Hash] sensu check definition.
         def validate_check_scheduling(check)
           (must_be_an_integer(check[:interval]) && check[:interval] > 0) ||
             invalid(check, "check interval must be an integer")
@@ -24,7 +24,7 @@ module Sensu
         # Validate check handling.
         # Validates: handler, handlers
         #
-        # @param check [Object] sensu check definition (hash).
+        # @param check [Hash] sensu check definition.
         def validate_check_handling(check)
           must_be_a_string_if_set(check[:handler]) ||
             invalid(check, "check handler must be a string")
@@ -39,7 +39,7 @@ module Sensu
         # Validate check flap detection.
         # Validates: low_flap_threshold, high_flap_threshold
         #
-        # @param check [Object] sensu check definition (hash).
+        # @param check [Hash] sensu check definition.
         def validate_check_flap_detection(check)
           if either_are_set?(check[:low_flap_threshold], check[:high_flap_threshold])
             must_be_an_integer(check[:low_flap_threshold]) ||
@@ -51,7 +51,7 @@ module Sensu
 
         # Validate a Sensu check definition.
         #
-        # @param check [Object] sensu check definition (hash).
+        # @param check [Hash] sensu check definition.
         def validate_check(check)
           must_be_a_string(check[:name]) ||
             invalid(check, "check name must be a string")

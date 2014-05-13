@@ -10,6 +10,7 @@ describe "Sensu::Settings::Validator" do
 
   it "can run, validating setting categories" do
     failures = @validator.run({})
+    failures.should be_kind_of(Array)
     failures.each do |failure|
       failure[:object].should be_nil
     end
@@ -219,6 +220,156 @@ describe "Sensu::Settings::Validator" do
     @validator.reset.should eq(0)
     mutator[:timeout] = 1
     @validator.validate_mutator(mutator)
+    @validator.reset.should eq(0)
+  end
+
+  it "can validate a handler definition" do
+    handler = {}
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(2)
+    handler[:type] = 1
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(2)
+    handler[:type] = "unknown"
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(1)
+    handler[:type] = "pipe"
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(1)
+    handler[:command] = 1
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(1)
+    handler[:command] = "cat"
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(0)
+    handler[:timeout] = "foo"
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(1)
+    handler[:timeout] = 1
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(0)
+    handler[:mutator] = 1
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(1)
+    handler[:mutator] = "foo"
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(0)
+    handler[:handle_flapping] = "true"
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(1)
+    handler[:handle_flapping] = true
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(0)
+    handler[:handle_flapping] = false
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(0)
+    handler[:filter] = 1
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(1)
+    handler[:filter] = "foo"
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(0)
+    handler[:filters] = "foo"
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(1)
+    handler[:filters] = []
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(0)
+    handler[:filters] = [1]
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(1)
+    handler[:filters] = ["foo"]
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(0)
+    handler[:severities] = "foo"
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(1)
+    handler[:severities] = []
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(0)
+    handler[:severities] = ["foo"]
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(1)
+    handler[:severities] = ["warning", "unknown"]
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(0)
+  end
+
+  it "can validate a tcp/udp handler definition" do
+    handler = {
+      :type => "tcp"
+    }
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(1)
+    handler[:socket] = {}
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(2)
+    handler[:socket][:host] = 1
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(2)
+    handler[:socket][:host] = "127.0.0.1"
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(1)
+    handler[:socket][:port] = "foo"
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(1)
+    handler[:socket][:port] = 2003
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(0)
+  end
+
+  it "can validate a transport handler definition" do
+    handler = {
+      :type => "transport"
+    }
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(1)
+    handler[:pipe] = 1
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(1)
+    handler[:pipe] = {}
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(3)
+    handler[:pipe][:type] = 1
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(3)
+    handler[:pipe][:type] = "unknown"
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(2)
+    handler[:pipe][:type] = "direct"
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(1)
+    handler[:pipe][:name] = 1
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(1)
+    handler[:pipe][:name] = "foo"
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(0)
+    handler[:pipe][:options] = 1
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(1)
+    handler[:pipe][:options] = {}
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(0)
+  end
+
+  it "can validate handler subdue" do
+    handler = {
+      :name => "foo",
+      :type => "pipe",
+      :command => "cat"
+    }
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(0)
+    handler[:subdue] = true
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(1)
+    handler[:subdue] = {
+      :at => "handler",
+      :begin => "14:30",
+      :end => "15:45"
+    }
+    @validator.validate_handler(handler)
     @validator.reset.should eq(0)
   end
 end

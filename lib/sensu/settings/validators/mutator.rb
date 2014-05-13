@@ -3,7 +3,7 @@ module Sensu
     module Validators
       module Mutator
         # Validate a Sensu mutator definition.
-        # Validates:
+        # Validates: command, timeout
         #
         # @param mutator [Hash] sensu mutator definition.
         def validate_mutator(mutator)

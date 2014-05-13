@@ -10,6 +10,14 @@ module Sensu
       end
       alias_method :is_a_hash?, :must_be_a_hash
 
+      # Check that a value is a hash, if set (not nil).
+      #
+      # @param value [Object] to check.
+      # @return [TrueClass, FalseClass]
+      def must_be_a_hash_if_set(value)
+        value.nil? ? true : must_be_a_hash(value)
+      end
+
       # Check that a value is an array.
       #
       # @param value [Object] to check.

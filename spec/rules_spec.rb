@@ -8,6 +8,9 @@ describe "Sensu::Settings::Rules" do
   it "can provide validation rules" do
     must_be_a_hash({}).should be_true
     must_be_a_hash("").should be_false
+    must_be_a_hash_if_set({}).should be_true
+    must_be_a_hash_if_set(nil).should be_true
+    must_be_a_hash_if_set("").should be_false
     must_be_an_array([]).should be_true
     must_be_an_array("").should be_false
     must_be_an_array_if_set([]).should be_true
