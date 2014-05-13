@@ -353,6 +353,26 @@ describe "Sensu::Settings::Validator" do
     @validator.reset.should eq(0)
   end
 
+  it "can validate a handler set definition" do
+    handler = {
+      :type => "set"
+    }
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(1)
+    handler[:handlers] = 1
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(1)
+    handler[:handlers] = "default"
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(1)
+    handler[:handlers] = [1]
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(1)
+    handler[:handlers] = ["default"]
+    @validator.validate_handler(handler)
+    @validator.reset.should eq(0)
+  end
+
   it "can validate handler subdue" do
     handler = {
       :name => "foo",
