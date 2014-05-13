@@ -176,4 +176,22 @@ describe "Sensu::Settings::Validator" do
     @validator.run(settings)
     @validator.reset.should eq(3)
   end
+
+  it "can validate a filter definition" do
+    filter = {}
+    @validator.validate_filter(filter)
+    @validator.reset.should eq(1)
+    filter[:attributes] = 1
+    @validator.validate_filter(filter)
+    @validator.reset.should eq(1)
+    filter[:attributes] = {}
+    @validator.validate_filter(filter)
+    @validator.reset.should eq(0)
+    filter[:negate] = "true"
+    @validator.validate_filter(filter)
+    @validator.reset.should eq(1)
+    filter[:negate] = true
+    @validator.validate_filter(filter)
+    @validator.reset.should eq(0)
+  end
 end
