@@ -86,14 +86,14 @@ module Sensu
         #
         # @param handler [Hash] sensu handler definition.
         def validate_handler_filtering(handler)
-          must_be_a_string_if_set(handler[:filter]) ||
-            invalid(handler, "handler filter must be a string")
           must_be_an_array_if_set(handler[:filters]) ||
             invalid(handler, "handler filters must be an array")
           if is_an_array?(handler[:filters])
             items_must_be_strings(handler[:filters]) ||
               invalid(handler, "handler filters items must be strings")
           end
+          must_be_a_string_if_set(handler[:filter]) ||
+            invalid(handler, "handler filter must be a string")
         end
 
         # Validate handler severities.
