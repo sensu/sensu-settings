@@ -536,4 +536,47 @@ describe "Sensu::Settings::Validator" do
     @validator.run(settings, "client")
     @validator.reset.should eq(4)
   end
+
+  it "can validate an api definition" do
+    api = {}
+    @validator.validate_api(api)
+    @validator.reset.should eq(1)
+    api[:port] = true
+    @validator.validate_api(api)
+    @validator.reset.should eq(1)
+    api[:port] = 4567
+    @validator.validate_api(api)
+    @validator.reset.should eq(0)
+    api[:bind] = true
+    @validator.validate_api(api)
+    @validator.reset.should eq(1)
+    api[:bind] = "127.0.0.1"
+    @validator.validate_api(api)
+    @validator.reset.should eq(0)
+    api[:user] = 1
+    @validator.validate_api(api)
+    @validator.reset.should eq(2)
+    api[:user] = "foo"
+    @validator.validate_api(api)
+    @validator.reset.should eq(1)
+    api[:password] = 1
+    @validator.validate_api(api)
+    @validator.reset.should eq(1)
+    api[:password] = "bar"
+    @validator.validate_api(api)
+    @validator.reset.should eq(0)
+  end
+
+  it "can run, validating api" do
+    settings = {
+      :api => {
+        :port => "4567"
+      }
+    }
+    @validator.run(settings, "api")
+    @validator.reset.should eq(5)
+    settings[:api][:port] = 4567
+    @validator.run(settings, "api")
+    @validator.reset.should eq(4)
+  end
 end

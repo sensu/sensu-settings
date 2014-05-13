@@ -26,6 +26,8 @@ module Sensu
         case service
         when "client"
           validate_client(settings[:client])
+        when "api"
+          validate_api(settings[:api])
         end
         @failures
       end

@@ -4,6 +4,7 @@ require "sensu/settings/validators/filter"
 require "sensu/settings/validators/mutator"
 require "sensu/settings/validators/handler"
 require "sensu/settings/validators/client"
+require "sensu/settings/validators/api"
 
 module Sensu
   module Settings
@@ -14,6 +15,7 @@ module Sensu
       include Mutator
       include Handler
       include Client
+      include API
     end
   end
 end
