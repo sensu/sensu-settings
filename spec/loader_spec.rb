@@ -48,4 +48,9 @@ describe "Sensu::Settings::Loader" do
     settings[:rabbitmq].should eq(ENV["RABBITMQ_URL"])
     ENV["RABBITMQ_URL"] = nil
   end
+
+  it "can validate loaded settings" do
+    failures = @loader.validate!
+    failures.size.should eq(4)
+  end
 end
