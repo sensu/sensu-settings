@@ -402,6 +402,9 @@ describe "Sensu::Settings::Validator" do
   end
 
   it "can validate a client definition" do
+    client = true
+    @validator.validate_client(client)
+    @validator.reset.should eq(1)
     client = {}
     @validator.validate_client(client)
     @validator.reset.should eq(4)
@@ -538,6 +541,9 @@ describe "Sensu::Settings::Validator" do
   end
 
   it "can validate an api definition" do
+    api = true
+    @validator.validate_api(api)
+    @validator.reset.should eq(1)
     api = {}
     @validator.validate_api(api)
     @validator.reset.should eq(1)

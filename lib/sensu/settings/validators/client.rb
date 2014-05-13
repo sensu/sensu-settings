@@ -94,16 +94,18 @@ module Sensu
         def validate_client(client)
           must_be_a_hash(client) ||
             invalid(client, "client must be a hash")
-          must_be_a_string(client[:name]) ||
-            invalid(client, "client name must be a string")
-          must_match_regex(/^[\w\.-]+$/, client[:name]) ||
-            invalid(client, "client name cannot contain spaces or special characters")
-          must_be_a_string(client[:address]) ||
-            invalid(client, "client address must be a string")
-          validate_client_subscriptions(client)
-          validate_client_socket(client)
-          validate_client_keepalive(client)
-          validate_client_redact(client)
+          if is_a_hash?(client)
+            msust_be_a_string(client[:name]) ||
+              invalid(client, "client name must be a string")
+            must_match_regex(/^[\w\.-]+$/, client[:name]) ||
+              invalid(client, "client name cannot contain spaces or special characters")
+            must_be_a_string(client[:address]) ||
+              invalid(client, "client address must be a string")
+            validate_client_subscriptions(client)
+            validate_client_socket(client)
+            validate_client_keepalive(client)
+            validate_client_redact(client)
+          end
         end
       end
     end
