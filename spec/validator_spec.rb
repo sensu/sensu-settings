@@ -49,6 +49,15 @@ describe "Sensu::Settings::Validator" do
     check[:command] = "true"
     @validator.validate_check(check)
     @validator.reset.should eq(2)
+    check[:timeout] = "foo"
+    @validator.validate_check(check)
+    @validator.reset.should eq(3)
+    check[:timeout] = 1.5
+    @validator.validate_check(check)
+    @validator.reset.should eq(2)
+    check[:timeout] = 1
+    @validator.validate_check(check)
+    @validator.reset.should eq(2)
     check[:interval] = "1"
     @validator.validate_check(check)
     @validator.reset.should eq(2)
@@ -192,6 +201,24 @@ describe "Sensu::Settings::Validator" do
     @validator.reset.should eq(1)
     filter[:negate] = true
     @validator.validate_filter(filter)
+    @validator.reset.should eq(0)
+  end
+
+  it "can validate a mutator definition" do
+    mutator = {}
+    @validator.validate_mutator(mutator)
+    @validator.reset.should eq(1)
+    mutator[:command] = "cat"
+    @validator.validate_mutator(mutator)
+    @validator.reset.should eq(0)
+    mutator[:timeout] = "foo"
+    @validator.validate_mutator(mutator)
+    @validator.reset.should eq(1)
+    mutator[:timeout] = 1.5
+    @validator.validate_mutator(mutator)
+    @validator.reset.should eq(0)
+    mutator[:timeout] = 1
+    @validator.validate_mutator(mutator)
     @validator.reset.should eq(0)
   end
 end
