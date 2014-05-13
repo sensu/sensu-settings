@@ -59,6 +59,14 @@ module Sensu
         value.is_a?(Integer)
       end
 
+      # Check that a value is an integer, if set (not nil).
+      #
+      # @param value [Object] to check.
+      # @return [TrueClass, FalseClass]
+      def must_be_an_integer_if_set(value)
+        value.nil? ? true : must_be_an_integer(value)
+      end
+
       # Check that a value is numeric.
       #
       # @param value [Object] to check.

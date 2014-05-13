@@ -65,6 +65,12 @@ describe "Sensu::Settings::Validator" do
     check[:interval] = 1
     @validator.validate_check(check)
     @validator.reset.should eq(1)
+    check[:publish] = "true"
+    @validator.validate_check(check)
+    @validator.reset.should eq(2)
+    check[:publish] = false
+    @validator.validate_check(check)
+    @validator.reset.should eq(1)
     check[:subscribers] = 1
     @validator.validate_check(check)
     @validator.reset.should eq(1)
@@ -178,11 +184,13 @@ describe "Sensu::Settings::Validator" do
       :checks => {
         :foo => {
           :command => "true",
-          :interval => 1,
           :standalone => true
         }
       }
     }
+    @validator.run(settings)
+    @validator.reset.should eq(4)
+    settings[:checks][:foo][:interval] = 1
     @validator.run(settings)
     @validator.reset.should eq(3)
   end
@@ -391,5 +399,141 @@ describe "Sensu::Settings::Validator" do
     }
     @validator.validate_handler(handler)
     @validator.reset.should eq(0)
+  end
+
+  it "can validate a client definition" do
+    client = {}
+    @validator.validate_client(client)
+    @validator.reset.should eq(4)
+    client[:name] = 1
+    @validator.validate_client(client)
+    @validator.reset.should eq(4)
+    client[:name] = "foo bar"
+    @validator.validate_client(client)
+    @validator.reset.should eq(3)
+    client[:name] = "foo"
+    @validator.validate_client(client)
+    @validator.reset.should eq(2)
+    client[:address] = 1
+    @validator.validate_client(client)
+    @validator.reset.should eq(2)
+    client[:address] = "127.0.0.1"
+    @validator.validate_client(client)
+    @validator.reset.should eq(1)
+    client[:subscriptions] = true
+    @validator.validate_client(client)
+    @validator.reset.should eq(1)
+    client[:subscriptions] = []
+    @validator.validate_client(client)
+    @validator.reset.should eq(0)
+    client[:subscriptions] = [1]
+    @validator.validate_client(client)
+    @validator.reset.should eq(1)
+    client[:subscriptions] = ["bar"]
+    @validator.validate_client(client)
+    @validator.reset.should eq(0)
+    client[:redact] = true
+    @validator.validate_client(client)
+    @validator.reset.should eq(1)
+    client[:redact] = []
+    @validator.validate_client(client)
+    @validator.reset.should eq(0)
+    client[:redact] = [1]
+    @validator.validate_client(client)
+    @validator.reset.should eq(1)
+    client[:redact] = ["secret"]
+    @validator.validate_client(client)
+    @validator.reset.should eq(0)
+  end
+
+  it "can validate client socket" do
+    client = {
+      :name => "foo",
+      :address => "127.0.0.1",
+      :subscriptions => ["bar"]
+    }
+    @validator.validate_client(client)
+    @validator.reset.should eq(0)
+    client[:socket] = true
+    @validator.validate_client(client)
+    @validator.reset.should eq(1)
+    client[:socket] = {}
+    @validator.validate_client(client)
+    @validator.reset.should eq(0)
+    client[:socket][:bind] = true
+    @validator.validate_client(client)
+    @validator.reset.should eq(1)
+    client[:socket][:bind] = "127.0.0.1"
+    @validator.validate_client(client)
+    @validator.reset.should eq(0)
+    client[:socket][:port] = "2012"
+    @validator.validate_client(client)
+    @validator.reset.should eq(1)
+    client[:socket][:port] = 2012
+    @validator.validate_client(client)
+    @validator.reset.should eq(0)
+  end
+
+  it "can validate client keepalive" do
+    client = {
+      :name => "foo",
+      :address => "127.0.0.1",
+      :subscriptions => ["bar"]
+    }
+    @validator.validate_client(client)
+    @validator.reset.should eq(0)
+    client[:keepalive] = true
+    @validator.validate_client(client)
+    @validator.reset.should eq(1)
+    client[:keepalive] = {}
+    @validator.validate_client(client)
+    @validator.reset.should eq(0)
+    client[:keepalive][:handler] = 1
+    @validator.validate_client(client)
+    @validator.reset.should eq(1)
+    client[:keepalive][:handler] = "foo"
+    @validator.validate_client(client)
+    @validator.reset.should eq(0)
+    client[:keepalive][:handlers] = 1
+    @validator.validate_client(client)
+    @validator.reset.should eq(1)
+    client[:keepalive][:handlers] = [1]
+    @validator.validate_client(client)
+    @validator.reset.should eq(1)
+    client[:keepalive][:handlers] = ["foo"]
+    @validator.validate_client(client)
+    @validator.reset.should eq(0)
+    client[:keepalive][:thresholds] = true
+    @validator.validate_client(client)
+    @validator.reset.should eq(1)
+    client[:keepalive][:thresholds] = {}
+    @validator.validate_client(client)
+    @validator.reset.should eq(0)
+    client[:keepalive][:thresholds][:warning] = "60"
+    @validator.validate_client(client)
+    @validator.reset.should eq(1)
+    client[:keepalive][:thresholds][:warning] = 60
+    @validator.validate_client(client)
+    @validator.reset.should eq(0)
+    client[:keepalive][:thresholds][:critical] = "90"
+    @validator.validate_client(client)
+    @validator.reset.should eq(1)
+    client[:keepalive][:thresholds][:critical] = 90
+    @validator.validate_client(client)
+    @validator.reset.should eq(0)
+  end
+
+  it "can run, validating client" do
+    settings = {
+      :client => {
+        :name => "foo",
+        :address => "127.0.0.1"
+      }
+    }
+    @validator.run(settings, "client")
+    @validator.reset.should eq(5)
+    settings[:client][:subscriptions] = ["bar"]
+    @validator.run(settings, "client")
+    @validator.reset.should eq(4)
   end
 end

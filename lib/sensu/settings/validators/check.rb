@@ -9,6 +9,8 @@ module Sensu
         def validate_check_scheduling(check)
           (must_be_an_integer(check[:interval]) && check[:interval] > 0) ||
             invalid(check, "check interval must be an integer")
+          must_be_boolean_if_set(check[:publish]) ||
+            invalid(check, "check publish must be boolean")
           must_be_boolean_if_set(check[:standalone]) ||
             invalid(check, "check standalone must be boolean")
           unless check[:standalone]

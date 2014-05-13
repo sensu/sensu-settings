@@ -19,17 +19,13 @@ module Sensu
       # Run the validator.
       #
       # @param settings [Hash] sensu settings to validate.
+      # @param service [String] sensu service to validate for.
       # @return [Array] validation failures.
-      def run(settings)
-        CATEGORIES.each do |category|
-          if is_a_hash?(settings[category])
-            validate_method = ("validate_" + category.to_s.chop).to_sym
-            settings[category].each do |name, details|
-              send(validate_method, details.merge(:name => name.to_s))
-            end
-          else
-            invalid(settings[category], "#{category} must be a hash")
-          end
+      def run(settings, service=nil)
+        validate_categories(settings)
+        case service
+        when "client"
+          validate_client(settings[:client])
         end
         @failures
       end
@@ -42,6 +38,23 @@ module Sensu
       alias_method :reset, :reset!
 
       private
+
+      # Validate setting categories: checks, filters, mutators, and
+      # handlers.
+      #
+      # @param settings [Hash] sensu settings to validate.
+      def validate_categories(settings)
+        CATEGORIES.each do |category|
+          if is_a_hash?(settings[category])
+            validate_method = ("validate_" + category.to_s.chop).to_sym
+            settings[category].each do |name, details|
+              send(validate_method, details.merge(:name => name.to_s))
+            end
+          else
+            invalid(settings[category], "#{category} must be a hash")
+          end
+        end
+      end
 
       # Record an invalid object with a message.
       #
