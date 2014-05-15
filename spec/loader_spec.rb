@@ -51,6 +51,11 @@ describe "Sensu::Settings::Loader" do
 
   it "can validate loaded settings" do
     failures = @loader.validate!
-    failures.size.should eq(4)
+    failures.size.should eq(0)
+  end
+
+  it "can provide indifferent access to settings" do
+    @loader[:checks].should be_kind_of(Hash)
+    @loader["checks"].should be_kind_of(Hash)
   end
 end

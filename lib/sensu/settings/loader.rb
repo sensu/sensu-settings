@@ -9,7 +9,32 @@ module Sensu
 
       def initialize
         @warnings = []
-        @settings = {}
+        @settings = {
+          :checks => {},
+          :filters => {},
+          :mutators => {},
+          :handlers => {}
+        }
+        @indifferent_access = false
+      end
+
+      # Access settings as an indifferent hash.
+      #
+      # @return [Hash] settings.
+      def to_hash
+        unless @indifferent_access
+          indifferent_access!
+        end
+        @settings
+      end
+
+      # Retrieve the value object corresponding to a key, acting like
+      # a Hash object.
+      #
+      # @param key [Object]
+      # @return [Object] value for key.
+      def [](key)
+        to_hash[key]
       end
 
       # Load settings from the environment.
@@ -30,6 +55,7 @@ module Sensu
           @settings[:api][:port] = ENV["API_PORT"].to_i
           warning(@settings[:api], "using api port environment variable")
         end
+        @indifferent_access = false
       end
 
       # Load settings from the environment and the paths provided.
@@ -51,6 +77,36 @@ module Sensu
       end
 
       private
+
+      # Creates an indifferent hash.
+      #
+      # @return [Hash] indifferent hash.
+      def indifferent_hash
+        Hash.new do |hash, key|
+          if key.is_a?(String)
+            hash[key.to_sym]
+          end
+        end
+      end
+
+      # Create a copy of a hash with indifferent access.
+      #
+      # @param hash [Hash] hash to make indifferent.
+      # @return [Hash] indifferent version of hash.
+      def with_indifferent_access(hash)
+        hash = indifferent_hash.merge(hash)
+        hash.each do |key, value|
+          if value.is_a?(Hash)
+            hash[key] = with_indifferent_access(value)
+          end
+        end
+      end
+
+      # Update settings to have indifferent access.
+      def indifferent_access!
+        @settings = with_indifferent_access(@settings)
+        @indifferent_access = true
+      end
 
       # Record a warning for an object.
       #
