@@ -1,0 +1,11 @@
+{
+  "checks": {
+    "nested": {
+      "command": "true",
+      "subscribers": [
+        "test"
+      ],
+      "interval": 30
+    }
+  }
+}

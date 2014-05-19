@@ -8,6 +8,7 @@ describe "Sensu::Settings::Loader" do
     @loader = Sensu::Settings::Loader.new
     @assets_dir = File.join(File.dirname(__FILE__), "assets")
     @config_file = File.join(@assets_dir, "config.json")
+    @config_dir = File.join(@assets_dir, "conf.d")
   end
 
   it "provides a loader API" do
@@ -99,11 +100,33 @@ describe "Sensu::Settings::Loader" do
     messages.should include("ignoring config file")
   end
 
-  it "can load settings from the environment and a file" do
+  it "can load settings from files in a directory" do
+    @loader.load_directory(@config_dir)
+    warnings = @loader.warnings
+    warnings.size.should eq(4)
+    messages = warnings.map do |warning|
+      warning[:message]
+    end
+    messages.should include("loading config files from directory")
+    messages.should include("loading config file")
+    messages.should include("config file applied changes")
+    @loader[:checks][:nested][:command].should eq("true")
+  end
+
+  it "can attempt to load settings from files in a nonexistent directory" do
+    @loader.load_directory("/tmp/rottentomatos")
+    @loader.warnings.size.should eq(1)
+    warning = @loader.warnings.first
+    warning[:message].should eq("loading config files from directory")
+  end
+
+  it "can load settings from the environment, a file, and a directory" do
     ENV["RABBITMQ_URL"] = "amqp://guest:guest@localhost:5672/"
-    @loader.load(:config_file => @config_file)
-    @loader[:rabbitmq].should eq(ENV["RABBITMQ_URL"])
-    @loader[:api][:port].should eq(4567)
+    settings = @loader.load(:config_file => @config_file, :config_dir => @config_dir)
+    settings[:rabbitmq].should eq(ENV["RABBITMQ_URL"])
+    settings[:api][:port].should eq(4567)
+    settings[:checks][:merger][:command].should eq("echo -n merger")
+    settings[:checks][:nested][:command].should eq("true")
     ENV["RABBITMQ_URL"] = nil
   end
 end

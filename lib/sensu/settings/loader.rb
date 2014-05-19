@@ -64,7 +64,7 @@ module Sensu
       #
       # @param [String] file path.
       def load_file(file)
-        if ::File.file?(file) && ::File.readable?(file)
+        if File.file?(file) && File.readable?(file)
           begin
             warning(file, "loading config file")
             contents = IO.read(file)
@@ -87,16 +87,33 @@ module Sensu
         end
       end
 
+      # Load settings from files in a directory. Files may be in
+      # nested directories.
+      #
+      # @param [String] directory path.
+      def load_directory(directory)
+        warning(directory, "loading config files from directory")
+        path = directory.gsub(/\\(?=\S)/, "/")
+        Dir.glob(File.join(path, "**/*.json")).each do |file|
+          load_file(file)
+        end
+      end
+
       # Load settings from the environment and the paths provided.
       #
-      # @param options [Hash]
+      # @param [Hash] options
+      # @option options [String] :config_file to load.
+      # @option options [String] :config_dir to load.
       # @return [Hash] loaded settings.
       def load(options={})
         load_env
         if options[:config_file]
           load_file(options[:config_file])
         end
-        @settings
+        if options[:config_dir]
+          load_directory(options[:config_dir])
+        end
+        to_hash
       end
 
       # Validate the loaded settings.
