@@ -6,8 +6,8 @@ describe "Sensu::Settings::Loader" do
 
   before do
     @loader = Sensu::Settings::Loader.new
-    assets_dir = File.join(File.dirname(__FILE__), "assets")
-    @config_file = File.join(assets_dir, "config.json")
+    @assets_dir = File.join(File.dirname(__FILE__), "assets")
+    @config_file = File.join(@assets_dir, "config.json")
   end
 
   it "provides a loader API" do
@@ -74,5 +74,36 @@ describe "Sensu::Settings::Loader" do
       failure[:message]
     end
     reasons.should include("check subscribers must be an array")
+  end
+
+  it "can attempt to load settings from a nonexistent file" do
+    @loader.load_file("/tmp/bananaphone")
+    warnings = @loader.warnings
+    warnings.size.should eq(2)
+    messages = warnings.map do |warning|
+      warning[:message]
+    end
+    messages.should include("config file does not exist or is not readable")
+    messages.should include("ignoring config file")
+  end
+
+  it "can attempt to load settings from a file with invalid JSON" do
+    @loader.load_file(File.join(@assets_dir, "invalid.json"))
+    warnings = @loader.warnings
+    warnings.size.should eq(3)
+    messages = warnings.map do |warning|
+      warning[:message]
+    end
+    messages.should include("loading config file")
+    messages.should include("config file must be valid json")
+    messages.should include("ignoring config file")
+  end
+
+  it "can load settings from the environment and a file" do
+    ENV["RABBITMQ_URL"] = "amqp://guest:guest@localhost:5672/"
+    @loader.load(:config_file => @config_file)
+    @loader[:rabbitmq].should eq(ENV["RABBITMQ_URL"])
+    @loader[:api][:port].should eq(4567)
+    ENV["RABBITMQ_URL"] = nil
   end
 end

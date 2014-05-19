@@ -93,6 +93,9 @@ module Sensu
       # @return [Hash] loaded settings.
       def load(options={})
         load_env
+        if options[:config_file]
+          load_file(options[:config_file])
+        end
         @settings
       end
 
