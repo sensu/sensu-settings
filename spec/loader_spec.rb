@@ -6,10 +6,22 @@ describe "Sensu::Settings::Loader" do
 
   before do
     @loader = Sensu::Settings::Loader.new
+    assets_dir = File.join(File.dirname(__FILE__), "assets")
+    @config_file = File.join(assets_dir, "config.json")
   end
 
   it "provides a loader API" do
     @loader.should respond_to(:load, :validate!)
+  end
+
+  it "can provide indifferent access to settings" do
+    @loader[:checks].should be_kind_of(Hash)
+    @loader["checks"].should be_kind_of(Hash)
+  end
+
+  it "can validate loaded settings" do
+    failures = @loader.validate!
+    failures.size.should eq(0)
   end
 
   it "can load RabbitMQ settings from the environment" do
@@ -49,13 +61,18 @@ describe "Sensu::Settings::Loader" do
     ENV["RABBITMQ_URL"] = nil
   end
 
-  it "can validate loaded settings" do
+  it "can load settings from a file" do
+    @loader.load_file(@config_file)
+    @loader.warnings.size.should eq(1)
+    warning = @loader.warnings.first
+    warning[:object].should match(/#{@config_file}/)
+    warning[:message].should eq("loading config file")
+    @loader[:api][:port].should eq(4567)
+    @loader["api"]["port"].should eq(4567)
     failures = @loader.validate!
-    failures.size.should eq(0)
-  end
-
-  it "can provide indifferent access to settings" do
-    @loader[:checks].should be_kind_of(Hash)
-    @loader["checks"].should be_kind_of(Hash)
+    reasons = failures.map do |failure|
+      failure[:message]
+    end
+    reasons.should include("check subscribers must be an array")
   end
 end

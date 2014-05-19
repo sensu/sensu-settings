@@ -1,4 +1,5 @@
 require "sensu/settings/validator"
+require "multi_json"
 
 module Sensu
   module Settings
@@ -16,6 +17,7 @@ module Sensu
           :handlers => {}
         }
         @indifferent_access = false
+        @loaded_files = []
       end
 
       # Access settings as an indifferent hash.
@@ -56,6 +58,33 @@ module Sensu
           warning(@settings[:api], "using api port environment variable")
         end
         @indifferent_access = false
+      end
+
+      # Load settings from a JSON file.
+      #
+      # @param [String] file path.
+      def load_file(file)
+        if ::File.file?(file) && ::File.readable?(file)
+          begin
+            warning(file, "loading config file")
+            contents = IO.read(file)
+            config = MultiJson.load(contents, :symbolize_keys => true)
+            merged = deep_merge(@settings, config)
+            unless @loaded_files.empty?
+              changes = deep_diff(@settings, merged)
+              warning(changes, "config file applied changes")
+            end
+            @settings = merged
+            @indifferent_access = false
+            @loaded_files << file
+          rescue MultiJson::ParseError => error
+            warning(file, "config file must be valid json")
+            warning(file, "ignoring config file")
+          end
+        else
+          warning(file, "config file does not exist or is not readable")
+          warning(file, "ignoring config file")
+        end
       end
 
       # Load settings from the environment and the paths provided.
@@ -106,6 +135,44 @@ module Sensu
       def indifferent_access!
         @settings = with_indifferent_access(@settings)
         @indifferent_access = true
+      end
+
+      # Deep merge two hashes.
+      #
+      # @param [Hash] hash_one to serve as base.
+      # @param [Hash] hash_two to merge in.
+      def deep_merge(hash_one, hash_two)
+        merged = hash_one.dup
+        hash_two.each do |key, value|
+          merged[key] = case
+          when hash_one[key].is_a?(Hash) && value.is_a?(Hash)
+            deep_merge(hash_one[key], value)
+          when hash_one[key].is_a?(Array) && value.is_a?(Array)
+            hash_one[key].concat(value).uniq
+          else
+            value
+          end
+        end
+        merged
+      end
+
+      # Compare two hashes.
+      #
+      # @param [Hash] hash_one to compare.
+      # @param [Hash] hash_two to compare.
+      # @return [Hash] comparison diff hash.
+      def deep_diff(hash_one, hash_two)
+        keys = hash_one.keys.concat(hash_two.keys).uniq
+        keys.inject(Hash.new) do |diff, key|
+          unless hash_one[key] == hash_two[key]
+            if hash_one[key].is_a?(Hash) && hash_two[key].is_a?(Hash)
+              diff[key] = deep_diff(hash_one[key], hash_two[key])
+            else
+              diff[key] = [hash_one[key], hash_two[key]]
+            end
+          end
+          diff
+        end
       end
 
       # Record a warning for an object.
