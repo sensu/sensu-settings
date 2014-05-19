@@ -74,7 +74,7 @@ describe "Sensu::Settings::Loader" do
     reasons = failures.map do |failure|
       failure[:message]
     end
-    reasons.should include("check subscribers must be an array")
+    reasons.should include("check interval must be an integer")
   end
 
   it "can attempt to load settings from a nonexistent file" do
@@ -126,6 +126,7 @@ describe "Sensu::Settings::Loader" do
     settings[:rabbitmq].should eq(ENV["RABBITMQ_URL"])
     settings[:api][:port].should eq(4567)
     settings[:checks][:merger][:command].should eq("echo -n merger")
+    settings[:checks][:merger][:subscribers].should eq(["foo", "bar"])
     settings[:checks][:nested][:command].should eq("true")
     ENV["RABBITMQ_URL"] = nil
   end

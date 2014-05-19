@@ -3,8 +3,9 @@
     "merger": {
       "command": "echo -n merger",
       "subscribers": [
-        "test"
-      ]
+        "bar"
+      ],
+     "interval": 60
     }
   }
 }
