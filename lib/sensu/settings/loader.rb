@@ -8,6 +8,10 @@ module Sensu
       #   @return [Array] loader warnings.
       attr_reader :warnings
 
+      # @!attribute [r] loaded_files
+      #   @return [Array] loaded config files.
+      attr_reader :loaded_files
+
       def initialize
         @warnings = []
         @settings = {
@@ -114,7 +118,15 @@ module Sensu
         end
       end
 
-      # Load settings from the environment and the paths provided.
+      # Set Sensu environment variables related to settings. This
+      # method currently sets SENSU_CONFIG_FILES, a colon delimited
+      # list of loaded config files.
+      def set_env
+        ENV['SENSU_CONFIG_FILES'] = @loaded_files.join(':')
+      end
+
+      # Load settings from the environment and the paths provided, set
+      # appropriate environment variables.
       #
       # @param [Hash] options
       # @option options [String] :config_file to load.
@@ -128,6 +140,7 @@ module Sensu
         if options[:config_dir]
           load_directory(options[:config_dir])
         end
+        set_env
         to_hash
       end
 

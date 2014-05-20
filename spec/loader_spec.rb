@@ -125,6 +125,7 @@ describe "Sensu::Settings::Loader" do
     settings[:checks][:merger][:command].should eq("echo -n merger")
     settings[:checks][:merger][:subscribers].should eq(["foo", "bar"])
     settings[:checks][:nested][:command].should eq("true")
+    ENV["SENSU_CONFIG_FILES"].split(":").should eq(@loader.loaded_files)
     ENV["RABBITMQ_URL"] = nil
   end
 
