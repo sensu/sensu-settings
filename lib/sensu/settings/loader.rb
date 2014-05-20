@@ -26,13 +26,11 @@ module Sensu
       def self.create_category_methods
         CATEGORIES.each do |category|
           define_method(category) do
-            @settings[category].map do |name, details|
-              details.merge(:name => name.to_s)
-            end
+            setting_category(category)
           end
           method_name = category.to_s.chop + "_exists?"
           define_method(method_name.to_sym) do |name|
-            @settings[category].has_key?(name.to_sym)
+            definition_exists?(category, name)
           end
         end
       end
@@ -143,6 +141,16 @@ module Sensu
       end
 
       private
+
+      def setting_category(category)
+        @settings[category].map do |name, details|
+          details.merge(:name => name.to_s)
+        end
+      end
+
+      def definition_exists?(category, name)
+        @settings[category].has_key?(name.to_sym)
+      end
 
       # Creates an indifferent hash.
       #
