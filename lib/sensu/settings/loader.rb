@@ -52,7 +52,7 @@ module Sensu
       # Retrieve the value object corresponding to a key, acting like
       # a Hash object.
       #
-      # @param [String, Symbol] key.
+      # @param key [String, Symbol]
       # @return [Object] value for key.
       def [](key)
         to_hash[key]
