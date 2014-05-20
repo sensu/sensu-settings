@@ -1,7 +1,9 @@
 # Sensu::Settings
 
-[![Code Climate](https://codeclimate.com/github/portertech/sensu-settings.png)](https://codeclimate.com/github/portertech/sensu-settings)
-[![Code Climate Coverage](https://codeclimate.com/github/portertech/sensu-settings/coverage.png)](https://codeclimate.com/github/portertech/sensu-settings)
+[![Build Status](https://travis-ci.org/sensu/sensu-settings.svg?branch=master)](https://travis-ci.org/sensu/sensu-settings)
+
+[![Code Climate](https://codeclimate.com/github/sensu/sensu-settings.png)](https://codeclimate.com/github/sensu/sensu-settings)
+[![Code Climate Coverage](https://codeclimate.com/github/sensu/sensu-settings/coverage.png)](https://codeclimate.com/github/sensu/sensu-settings)
 
 ## Installation
 
@@ -13,17 +15,13 @@ And then execute:
 
     $ bundle
 
-Or install it yourself as:
-
-    $ gem install sensu-settings
-
 ## Usage
 
-TODO: Write usage instructions here
+Documentation can be found [here](http://rubydoc.info/github/sensu/sensu-settings/Sensu/Settings).
 
 ## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/sensu-settings/fork )
+1. [Fork it](https://github.com/sensu/sensu-settings/fork)
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
