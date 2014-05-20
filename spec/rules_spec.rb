@@ -44,8 +44,12 @@ describe "Sensu::Settings::Rules" do
     either_are_set?(nil, nil).should be_false
     must_be_time("16:30").should be_true
     must_be_time("16:30", "21:00").should be_true
-    must_be_time("false").should be_false
-    must_be_time("false", "21:00").should be_false
+    must_be_time(false).should be_false
+    must_be_time(false, "21:00").should be_false
+    unless RUBY_VERSION < "1.9"
+      must_be_time("false").should be_false
+      must_be_time("false", "21:00").should be_false
+    end
     must_be_time(1).should be_false
     must_be_either(%w[foo bar], "foo").should be_true
     must_be_either(%w[foo bar], "bar").should be_true
