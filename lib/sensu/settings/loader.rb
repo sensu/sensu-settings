@@ -48,8 +48,7 @@ module Sensu
           end
         end
 
-        method_name = category.to_s.chop + "_exists?"
-        define_method(method_name.to_sym) do |name|
+        define_method((category.to_s.chop + "_exists?").to_sym) do |name|
           @settings[category].has_key?(name.to_sym)
         end
       end
