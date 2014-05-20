@@ -118,27 +118,8 @@ module Sensu
       # Set Sensu settings related environment variables. This method
       # currently sets SENSU_CONFIG_FILES, a colon delimited list of
       # loaded config files.
-      def set_env
+      def set_env!
         ENV["SENSU_CONFIG_FILES"] = @loaded_files.join(":")
-      end
-
-      # Load settings from the environment and the paths provided, set
-      # appropriate environment variables.
-      #
-      # @param [Hash] options
-      # @option options [String] :config_file to load.
-      # @option options [String] :config_dir to load.
-      # @return [Hash] loaded settings.
-      def load(options={})
-        load_env
-        if options[:config_file]
-          load_file(options[:config_file])
-        end
-        if options[:config_dir]
-          load_directory(options[:config_dir])
-        end
-        set_env
-        to_hash
       end
 
       # Validate the loaded settings.

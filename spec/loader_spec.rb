@@ -12,7 +12,7 @@ describe "Sensu::Settings::Loader" do
   end
 
   it "can provide a loader API" do
-    @loader.should respond_to(:load, :validate!)
+    @loader.should respond_to(:load_env, :load_file, :load_directory, :set_env!, :validate!)
   end
 
   it "can provide indifferent access to settings" do
@@ -117,20 +117,17 @@ describe "Sensu::Settings::Loader" do
     warning[:message].should eq("loading config files from directory")
   end
 
-  it "can load settings from the environment, a file, and a directory" do
-    ENV["RABBITMQ_URL"] = "amqp://guest:guest@localhost:5672/"
-    settings = @loader.load(:config_file => @config_file, :config_dir => @config_dir)
-    settings[:rabbitmq].should eq(ENV["RABBITMQ_URL"])
-    settings[:api][:port].should eq(4567)
-    settings[:checks][:merger][:command].should eq("echo -n merger")
-    settings[:checks][:merger][:subscribers].should eq(["foo", "bar"])
-    settings[:checks][:nested][:command].should eq("true")
+  it "can set environment variables for child processes" do
+    @loader.load_file(@config_file)
+    @loader.load_directory(@config_dir)
+    @loader.loaded_files.size.should eq(3)
+    @loader.set_env!
     ENV["SENSU_CONFIG_FILES"].split(":").should eq(@loader.loaded_files)
-    ENV["RABBITMQ_URL"] = nil
   end
 
   it "can load settings and determine if certain definitions exist" do
-    @loader.load(:config_file => @config_file, :config_dir => @config_dir)
+    @loader.load_file(@config_file)
+    @loader.load_directory(@config_dir)
     @loader.check_exists?("nonexistent").should be_false
     @loader.check_exists?("tokens").should be_true
     @loader.filter_exists?("nonexistent").should be_false
@@ -142,7 +139,8 @@ describe "Sensu::Settings::Loader" do
   end
 
   it "can load settings and provide setting category accessors" do
-    @loader.load(:config_file => @config_file, :config_dir => @config_dir)
+    @loader.load_file(@config_file)
+    @loader.load_directory(@config_dir)
     @loader.checks.should be_kind_of(Array)
     @loader.checks.should_not be_empty
     check = @loader.checks.detect do |check|

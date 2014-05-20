@@ -1,0 +1,9 @@
+{
+  "checks": {
+    "app_http_endpoint": {
+      "command": "check-http.rb -u https://localhost/ping -q pong",
+      "standalone": true,
+      "interval": 30
+    }
+  }
+}
