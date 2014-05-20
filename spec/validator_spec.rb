@@ -87,16 +87,19 @@ describe "Sensu::Settings::Validator" do
     check[:timeout] = 1
     @validator.validate_check(check)
     @validator.reset.should eq(2)
+    check[:publish] = "false"
+    @validator.validate_check(check)
+    @validator.reset.should eq(3)
+    check[:publish] = false
+    @validator.validate_check(check)
+    @validator.reset.should eq(1)
+    check[:publish] = true
+    @validator.validate_check(check)
+    @validator.reset.should eq(2)
     check[:interval] = "1"
     @validator.validate_check(check)
     @validator.reset.should eq(2)
     check[:interval] = 1
-    @validator.validate_check(check)
-    @validator.reset.should eq(1)
-    check[:publish] = "true"
-    @validator.validate_check(check)
-    @validator.reset.should eq(2)
-    check[:publish] = false
     @validator.validate_check(check)
     @validator.reset.should eq(1)
     check[:subscribers] = 1
