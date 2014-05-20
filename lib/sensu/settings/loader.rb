@@ -1,3 +1,5 @@
+gem "multi_json", "1.10.0"
+
 require "sensu/settings/validator"
 require "multi_json"
 
