@@ -7,7 +7,7 @@ module Sensu
     # @param [Hash] options
     # @option options [String] :config_file to load.
     # @option options [String] :config_dir to load.
-    # @option options [String] :config_dirs to load.
+    # @option options [Array] :config_dirs to load.
     # @return [Loader] a loaded instance of Loader.
     def self.load(options={})
       loader = Loader.new
