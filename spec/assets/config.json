@@ -23,11 +23,8 @@
     }
   },
   "mutators": {
-    "tag": {
-      "command": "./spec/mutators/tag.rb"
-    },
-    "explode": {
-      "command": "echo -n exploded && exit 2"
+    "noop": {
+      "command": "cat"
     }
   },
   "handlers": {

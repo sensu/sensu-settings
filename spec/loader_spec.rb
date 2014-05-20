@@ -11,7 +11,7 @@ describe "Sensu::Settings::Loader" do
     @config_dir = File.join(@assets_dir, "conf.d")
   end
 
-  it "provides a loader API" do
+  it "can provide a loader API" do
     @loader.should respond_to(:load, :validate!)
   end
 
@@ -55,21 +55,18 @@ describe "Sensu::Settings::Loader" do
     ENV["PORT"] = nil
   end
 
-  it "can load settings from the environment and the paths provided" do
-    ENV["RABBITMQ_URL"] = "amqp://guest:guest@localhost:5672/"
-    settings = @loader.load
-    settings[:rabbitmq].should eq(ENV["RABBITMQ_URL"])
-    ENV["RABBITMQ_URL"] = nil
-  end
-
   it "can load settings from a file" do
     @loader.load_file(@config_file)
     @loader.warnings.size.should eq(1)
     warning = @loader.warnings.first
-    warning[:object].should match(/#{@config_file}/)
+    warning[:object].should eq(File.expand_path(@config_file))
     warning[:message].should eq("loading config file")
     @loader[:api][:port].should eq(4567)
     @loader["api"]["port"].should eq(4567)
+  end
+
+  it "can load settings from a file and validate them" do
+    @loader.load_file(@config_file)
     failures = @loader.validate!
     reasons = failures.map do |failure|
       failure[:message]
@@ -129,5 +126,45 @@ describe "Sensu::Settings::Loader" do
     settings[:checks][:merger][:subscribers].should eq(["foo", "bar"])
     settings[:checks][:nested][:command].should eq("true")
     ENV["RABBITMQ_URL"] = nil
+  end
+
+  it "can load settings and determine if certain definitions exist" do
+    @loader.load(:config_file => @config_file, :config_dir => @config_dir)
+    @loader.check_exists?("nonexistent").should be_false
+    @loader.check_exists?("tokens").should be_true
+    @loader.filter_exists?("nonexistent").should be_false
+    @loader.filter_exists?("development").should be_true
+    @loader.mutator_exists?("nonexistent").should be_false
+    @loader.mutator_exists?("noop").should be_true
+    @loader.handler_exists?("nonexistent").should be_false
+    @loader.handler_exists?("default").should be_true
+  end
+
+  it "can load settings and provide setting category accessors" do
+    @loader.load(:config_file => @config_file, :config_dir => @config_dir)
+    @loader.checks.should be_kind_of(Array)
+    @loader.checks.should_not be_empty
+    check = @loader.checks.detect do |check|
+      check[:name] == "tokens"
+    end
+    check[:interval].should eq(1)
+    @loader.filters.should be_kind_of(Array)
+    @loader.filters.should_not be_empty
+    filter = @loader.filters.detect do |filter|
+      filter[:name] == "development"
+    end
+    filter[:negate].should be_true
+    @loader.mutators.should be_kind_of(Array)
+    @loader.mutators.should_not be_empty
+    mutator = @loader.mutators.detect do |mutator|
+      mutator[:name] == "noop"
+    end
+    mutator[:command].should eq("cat")
+    @loader.handlers.should be_kind_of(Array)
+    @loader.handlers.should_not be_empty
+    handler = @loader.handlers.detect do |handler|
+      handler[:name] == "default"
+    end
+    handler[:type].should eq("set")
   end
 end
