@@ -52,7 +52,7 @@ module Sensu
       # Retrieve the value object corresponding to a key, acting like
       # a Hash object.
       #
-      # @param key [Object]
+      # @param [String, Symbol] key.
       # @return [Object] value for key.
       def [](key)
         to_hash[key]
@@ -118,11 +118,11 @@ module Sensu
         end
       end
 
-      # Set Sensu environment variables related to settings. This
-      # method currently sets SENSU_CONFIG_FILES, a colon delimited
-      # list of loaded config files.
+      # Set Sensu settings related environment variables. This method
+      # currently sets SENSU_CONFIG_FILES, a colon delimited list of
+      # loaded config files.
       def set_env
-        ENV['SENSU_CONFIG_FILES'] = @loaded_files.join(':')
+        ENV["SENSU_CONFIG_FILES"] = @loaded_files.join(":")
       end
 
       # Load settings from the environment and the paths provided, set
@@ -244,7 +244,7 @@ module Sensu
 
       # Record a warning for an object.
       #
-      # @param object [Object]
+      # @param object [Object] under suspicion.
       # @param message [String] warning message.
       # @return [Array] current warnings.
       def warning(object, message)
