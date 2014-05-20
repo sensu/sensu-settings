@@ -142,12 +142,21 @@ module Sensu
 
       private
 
+      # Retrieve setting category definitions.
+      #
+      # @param [Symbol] category to retrive.
+      # @return [Array<Hash>] category definitions.
       def setting_category(category)
         @settings[category].map do |name, details|
           details.merge(:name => name.to_s)
         end
       end
 
+      # Check to see if a definition exists in a category.
+      #
+      # @param [Symbol] category to inspect for the definition.
+      # @param [String] name of definition.
+      # @return [TrueClass, FalseClass]
       def definition_exists?(category, name)
         @settings[category].has_key?(name.to_sym)
       end
