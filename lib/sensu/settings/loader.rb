@@ -18,6 +18,23 @@ module Sensu
         }
         @indifferent_access = false
         @loaded_files = []
+        self.class.create_category_methods
+      end
+
+      # Create setting category accessors and methods to test the
+      # existence of definitions. Called in initialize().
+      def self.create_category_methods
+        CATEGORIES.each do |category|
+          define_method(category) do
+            @settings[category].map do |name, details|
+              details.merge(:name => name.to_s)
+            end
+          end
+          method_name = category.to_s.chop + "_exists?"
+          define_method(method_name.to_sym) do |name|
+            @settings[category].has_key?(name.to_sym)
+          end
+        end
       end
 
       # Access settings as an indifferent hash.
@@ -37,20 +54,6 @@ module Sensu
       # @return [Object] value for key.
       def [](key)
         to_hash[key]
-      end
-
-      # Retrieve definition objects for a setting category, or check
-      # to see if a definition exists in the category.
-      CATEGORIES.each do |category|
-        define_method(category) do
-          @settings[category].map do |name, details|
-            details.merge(:name => name.to_s)
-          end
-        end
-
-        define_method((category.to_s.chop + "_exists?").to_sym) do |name|
-          @settings[category].has_key?(name.to_sym)
-        end
       end
 
       # Load settings from the environment.
