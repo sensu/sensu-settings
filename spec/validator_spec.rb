@@ -24,6 +24,34 @@ describe "Sensu::Settings::Validator" do
     reasons.size.should eq(4)
   end
 
+  it "can validate a transport definition" do
+    transport = nil
+    @validator.validate_transport(transport)
+    @validator.reset.should eq(0)
+    transport = {}
+    @validator.validate_transport(transport)
+    @validator.reset.should eq(0)
+    transport[:name] = 1
+    @validator.validate_transport(transport)
+    @validator.reset.should eq(1)
+    transport[:name] = "rabbitmq"
+    @validator.validate_transport(transport)
+    @validator.reset.should eq(0)
+  end
+
+  it "can run, validating transport" do
+    settings = {
+      :transport => {
+        :name => 1
+      }
+    }
+    @validator.run(settings)
+    @validator.reset.should eq(5)
+    settings[:transport][:name] = "rabbitmq"
+    @validator.run(settings)
+    @validator.reset.should eq(4)
+  end
+
   it "can validate an empty check definition" do
     @validator.validate_check({})
     reasons = @validator.failures.map do |failure|
