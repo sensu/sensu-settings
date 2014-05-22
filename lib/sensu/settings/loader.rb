@@ -132,7 +132,7 @@ module Sensu
       # Validate the loaded settings.
       #
       # @return [Array] validation failures.
-      def validate!
+      def validate
         service = ::File.basename($0).split("-").last
         validator = Validator.new
         validator.run(@settings, service)

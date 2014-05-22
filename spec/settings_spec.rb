@@ -15,7 +15,7 @@ describe "Sensu::Settings" do
     Sensu::Settings.should respond_to(:load)
     Sensu::Settings.load.should be_an_instance_of(Sensu::Settings::Loader)
     settings = Sensu::Settings.load
-    settings.should respond_to(:validate!)
+    settings.should respond_to(:validate)
   end
 
   it "can load settings from the environment, a file, and a directory" do

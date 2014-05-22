@@ -12,7 +12,7 @@ describe "Sensu::Settings::Loader" do
   end
 
   it "can provide a loader API" do
-    @loader.should respond_to(:load_env, :load_file, :load_directory, :set_env!, :validate!)
+    @loader.should respond_to(:load_env, :load_file, :load_directory, :set_env!, :validate)
   end
 
   it "can provide indifferent access to settings" do
@@ -21,7 +21,7 @@ describe "Sensu::Settings::Loader" do
   end
 
   it "can validate loaded settings" do
-    failures = @loader.validate!
+    failures = @loader.validate
     failures.size.should eq(0)
   end
 
@@ -67,7 +67,7 @@ describe "Sensu::Settings::Loader" do
 
   it "can load settings from a file and validate them" do
     @loader.load_file(@config_file)
-    failures = @loader.validate!
+    failures = @loader.validate
     reasons = failures.map do |failure|
       failure[:message]
     end
