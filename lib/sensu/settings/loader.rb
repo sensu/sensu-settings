@@ -46,8 +46,8 @@ module Sensu
         @settings
       end
 
-      # Retrieve the value object corresponding to a key, acting like
-      # a Hash object.
+      # Retrieve the setting object corresponding to a key, acting
+      # like a Hash object.
       #
       # @param key [String, Symbol]
       # @return [Object] value for key.
