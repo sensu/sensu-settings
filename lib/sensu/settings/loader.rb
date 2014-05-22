@@ -14,7 +14,10 @@ module Sensu
 
       def initialize
         @warnings = []
-        @settings = Hash[CATEGORIES.map {|category| [category, {}]}]
+        @settings = {}
+        CATEGORIES.each do |category|
+          @settings[category] = {}
+        end
         @indifferent_access = false
         @loaded_files = []
         self.class.create_category_methods
