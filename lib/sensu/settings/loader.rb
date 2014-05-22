@@ -61,18 +61,18 @@ module Sensu
       def load_env
         if ENV["RABBITMQ_URL"]
           @settings[:rabbitmq] = ENV["RABBITMQ_URL"]
-          warning(@settings[:rabbitmq], "using rabbitmq url environment variable")
+          warning("using rabbitmq url environment variable", :rabbitmq => @settings[:rabbitmq])
         end
         ENV["REDIS_URL"] ||= ENV["REDISTOGO_URL"]
         if ENV["REDIS_URL"]
           @settings[:redis] = ENV["REDIS_URL"]
-          warning(@settings[:redis], "using redis url environment variable")
+          warning("using redis url environment variable", :redis => @settings[:redis])
         end
         ENV["API_PORT"] ||= ENV["PORT"]
         if ENV["API_PORT"]
           @settings[:api] ||= {}
           @settings[:api][:port] = ENV["API_PORT"].to_i
-          warning(@settings[:api], "using api port environment variable")
+          warning("using api port environment variable", :api => @settings[:api])
         end
         @indifferent_access = false
       end
@@ -83,24 +83,30 @@ module Sensu
       def load_file(file)
         if File.file?(file) && File.readable?(file)
           begin
-            warning(file, "loading config file")
+            warning("loading config file", :file => file)
             contents = IO.read(file)
             config = MultiJson.load(contents, :symbolize_keys => true)
             merged = deep_merge(@settings, config)
             unless @loaded_files.empty?
               changes = deep_diff(@settings, merged)
-              warning(changes, "config file applied changes")
+              warning("config file applied changes", {
+                :file => file,
+                :changes => changes
+              })
             end
             @settings = merged
             @indifferent_access = false
             @loaded_files << file
           rescue MultiJson::ParseError => error
-            warning(file, "config file must be valid json")
-            warning(file, "ignoring config file")
+            warning("config file must be valid json", {
+              :file => file,
+              :error => error.to_s
+            })
+            warning("ignoring config file", :file => file)
           end
         else
-          warning(file, "config file does not exist or is not readable")
-          warning(file, "ignoring config file")
+          warning("config file does not exist or is not readable", :file => file)
+          warning("ignoring config file", :file => file)
         end
       end
 
@@ -109,7 +115,7 @@ module Sensu
       #
       # @param [String] directory path.
       def load_directory(directory)
-        warning(directory, "loading config files from directory")
+        warning("loading config files from directory", :directory => directory)
         path = directory.gsub(/\\(?=\S)/, "/")
         Dir.glob(File.join(path, "**/*.json")).each do |file|
           load_file(file)
@@ -221,16 +227,15 @@ module Sensu
         end
       end
 
-      # Record a warning for an object.
+      # Record a warning.
       #
-      # @param object [Object] under suspicion.
       # @param message [String] warning message.
+      # @param data [Hash] warning context.
       # @return [Array] current warnings.
-      def warning(object, message)
+      def warning(message, data={})
         @warnings << {
-          :object => object,
           :message => message
-        }
+        }.merge(data)
       end
     end
   end

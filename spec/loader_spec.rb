@@ -59,7 +59,7 @@ describe "Sensu::Settings::Loader" do
     @loader.load_file(@config_file)
     @loader.warnings.size.should eq(1)
     warning = @loader.warnings.first
-    warning[:object].should eq(File.expand_path(@config_file))
+    warning[:file].should eq(File.expand_path(@config_file))
     warning[:message].should eq("loading config file")
     @loader[:api][:port].should eq(4567)
     @loader["api"]["port"].should eq(4567)
