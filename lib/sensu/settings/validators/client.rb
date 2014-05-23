@@ -88,7 +88,7 @@ module Sensu
         end
 
         # Validate a Sensu client definition.
-        # Validates: name, address
+        # Validates: name, address, safe_mode
         #
         # @param client [Hash] sensu client definition.
         def validate_client(client)
@@ -101,6 +101,8 @@ module Sensu
               invalid(client, "client name cannot contain spaces or special characters")
             must_be_a_string(client[:address]) ||
               invalid(client, "client address must be a string")
+            must_be_boolean_if_set(client[:safe_mode]) ||
+              invalid(client, "client safe_mode must be boolean")
             validate_client_subscriptions(client)
             validate_client_socket(client)
             validate_client_keepalive(client)

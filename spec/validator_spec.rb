@@ -478,6 +478,12 @@ describe "Sensu::Settings::Validator" do
     client[:redact] = ["secret"]
     @validator.validate_client(client)
     @validator.reset.should eq(0)
+    client[:safe_mode] = 1
+    @validator.validate_client(client)
+    @validator.reset.should eq(1)
+    client[:safe_mode] = false
+    @validator.validate_client(client)
+    @validator.reset.should eq(0)
   end
 
   it "can validate client socket" do
