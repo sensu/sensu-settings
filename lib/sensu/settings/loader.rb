@@ -133,9 +133,8 @@ module Sensu
       #
       # @return [Array] validation failures.
       def validate
-        service = ::File.basename($0).split("-").last
         validator = Validator.new
-        validator.run(@settings, service)
+        validator.run(@settings, sensu_service_name)
       end
 
       private
@@ -225,6 +224,13 @@ module Sensu
           end
           diff
         end
+      end
+
+      # Retrieve Sensu service name.
+      #
+      # @return [String] service name.
+      def sensu_service_name
+        File.basename($0).split("-").last
       end
 
       # Record a warning.
