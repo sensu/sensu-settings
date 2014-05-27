@@ -24,6 +24,12 @@ describe "Sensu::Settings" do
     Sensu::Settings.get.should eq(settings)
   end
 
+  it "can load up a loader if one doesn't exist" do
+    settings = Sensu::Settings.get
+    settings.should be_an_instance_of(Sensu::Settings::Loader)
+    Sensu::Settings.get.should eq(settings)
+  end
+
   it "can load settings from the environment, a file, and a directory" do
     ENV["RABBITMQ_URL"] = "amqp://guest:guest@localhost:5672/"
     settings = Sensu::Settings.load(:config_file => @config_file, :config_dir => @config_dir)
