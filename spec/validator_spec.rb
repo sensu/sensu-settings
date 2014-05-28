@@ -37,12 +37,6 @@ describe "Sensu::Settings::Validator" do
     transport[:name] = "rabbitmq"
     @validator.validate_transport(transport)
     @validator.reset.should eq(0)
-    transport[:reconnect_on_error] = 1
-    @validator.validate_transport(transport)
-    @validator.reset.should eq(1)
-    transport[:reconnect_on_error] = false
-    @validator.validate_transport(transport)
-    @validator.reset.should eq(0)
   end
 
   it "can run, validating transport" do
