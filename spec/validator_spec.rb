@@ -21,13 +21,13 @@ describe "Sensu::Settings::Validator" do
     reasons.should include("filters must be a hash")
     reasons.should include("mutators must be a hash")
     reasons.should include("handlers must be a hash")
-    reasons.size.should eq(4)
+    reasons.size.should eq(5)
   end
 
   it "can validate a transport definition" do
     transport = nil
     @validator.validate_transport(transport)
-    @validator.reset.should eq(0)
+    @validator.reset.should eq(1)
     transport = {}
     @validator.validate_transport(transport)
     @validator.reset.should eq(0)
@@ -35,6 +35,12 @@ describe "Sensu::Settings::Validator" do
     @validator.validate_transport(transport)
     @validator.reset.should eq(1)
     transport[:name] = "rabbitmq"
+    @validator.validate_transport(transport)
+    @validator.reset.should eq(0)
+    transport[:reconnect_on_error] = 1
+    @validator.validate_transport(transport)
+    @validator.reset.should eq(1)
+    transport[:reconnect_on_error] = false
     @validator.validate_transport(transport)
     @validator.reset.should eq(0)
   end
@@ -220,10 +226,10 @@ describe "Sensu::Settings::Validator" do
       }
     }
     @validator.run(settings)
-    @validator.reset.should eq(4)
+    @validator.reset.should eq(5)
     settings[:checks][:foo][:interval] = 1
     @validator.run(settings)
-    @validator.reset.should eq(3)
+    @validator.reset.should eq(4)
   end
 
   it "can validate a filter definition" do
@@ -571,10 +577,10 @@ describe "Sensu::Settings::Validator" do
       }
     }
     @validator.run(settings, "client")
-    @validator.reset.should eq(5)
+    @validator.reset.should eq(6)
     settings[:client][:subscriptions] = ["bar"]
     @validator.run(settings, "client")
-    @validator.reset.should eq(4)
+    @validator.reset.should eq(5)
   end
 
   it "can validate an api definition" do
@@ -617,9 +623,9 @@ describe "Sensu::Settings::Validator" do
       }
     }
     @validator.run(settings, "api")
-    @validator.reset.should eq(5)
+    @validator.reset.should eq(6)
     settings[:api][:port] = 4567
     @validator.run(settings, "api")
-    @validator.reset.should eq(4)
+    @validator.reset.should eq(5)
   end
 end

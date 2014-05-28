@@ -14,7 +14,9 @@ module Sensu
 
       def initialize
         @warnings = []
-        @settings = {}
+        @settings = {
+          :transport => {}
+        }
         CATEGORIES.each do |category|
           @settings[category] = {}
         end
