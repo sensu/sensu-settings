@@ -27,7 +27,7 @@ describe "Sensu::Settings::Rules" do
     expect(must_be_a_numeric("")).to be(false)
     expect(must_match_regex(/^foo$/, "foo")).to be(true)
     expect(must_match_regex(/^foo$/, "bar")).to be(false)
-    expect(must_match_regex(/^\w$/, "baz$")).to be(false)
+    expect(must_match_regex(/^\w+$/, "baz$")).to be(false)
     expect(must_be_boolean_if_set(true)).to be(true)
     expect(must_be_boolean_if_set(false)).to be(true)
     expect(must_be_boolean_if_set(nil)).to be(true)
