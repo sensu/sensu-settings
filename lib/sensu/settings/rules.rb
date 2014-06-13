@@ -89,7 +89,7 @@ module Sensu
       # @param value [Object] to check if matches pattern.
       # @return [TrueClass, FalseClass]
       def must_match_regex(regex, value)
-        value =~ regex
+        (value =~ regex) == 0
       end
 
       # Check if a value is boolean, if set (no nil).
