@@ -141,6 +141,15 @@ describe "Sensu::Settings::Validator" do
     check[:high_flap_threshold] = 55
     @validator.validate_check(check)
     expect(@validator.reset).to eq(0)
+    check[:masquerade] = 1
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(2)
+    check[:masquerade] = "%&@*"
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
+    check[:masquerade] = "i-424242"
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(0)
   end
 
   it "can validate check subdue" do
