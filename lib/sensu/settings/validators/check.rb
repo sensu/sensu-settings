@@ -53,6 +53,17 @@ module Sensu
           end
         end
 
+        # Validate check masquerade.
+        # Validates: masquerade
+        #
+        # @param check [Hash] sensu check definition.
+        def validate_check_masquerade(check)
+          must_be_a_string(check[:masquerade]) ||
+            invalid(check, "check masquerade must be a string")
+          must_match_regex(/^[\w\.-]+$/, check[:masquerade]) ||
+            invalid(check, "check masquerade cannot contain spaces or special characters")
+        end
+
         # Validate a Sensu check definition.
         #
         # @param check [Hash] sensu check definition.
@@ -68,6 +79,9 @@ module Sensu
           validate_check_scheduling(check)
           validate_check_handling(check)
           validate_check_flap_detection(check)
+          if check[:masquerade]
+            validate_check_masquerade(check)
+          end
           if check[:subdue]
             validate_subdue(check)
           end
