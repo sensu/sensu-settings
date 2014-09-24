@@ -141,13 +141,10 @@ describe "Sensu::Settings::Validator" do
     check[:high_flap_threshold] = 55
     @validator.validate_check(check)
     expect(@validator.reset).to eq(0)
-    check[:masquerade] = 1
-    @validator.validate_check(check)
-    expect(@validator.reset).to eq(2)
-    check[:masquerade] = "%&@*"
+    check[:source] = 1
     @validator.validate_check(check)
     expect(@validator.reset).to eq(1)
-    check[:masquerade] = "i-424242"
+    check[:source] = "switch-%42%"
     @validator.validate_check(check)
     expect(@validator.reset).to eq(0)
   end
