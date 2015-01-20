@@ -1,5 +1,5 @@
 module Sensu
   module Settings
-    CATEGORIES = [:checks, :filters, :mutators, :handlers]
+    CATEGORIES = [:agents, :checks, :filters, :mutators, :handlers]
   end
 end

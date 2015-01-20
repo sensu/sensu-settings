@@ -92,6 +92,15 @@ module Sensu
         (value =~ regex) == 0
       end
 
+      # Check that a value matches a regular expression, if set (not nil).
+      #
+      # @param regex [Regexp] pattern to compare with value.
+      # @param value [Object] to check if matches pattern.
+      # @return [TrueClass, FalseClass]
+      def must_match_regex_if_set(regex, value)
+        value.nil? ? true : must_match_regex(regex, value)
+      end
+
       # Check if a value is boolean, if set (no nil).
       #
       # @param value [Object] to check.
@@ -116,6 +125,16 @@ module Sensu
       # @return [TrueClass, FalseClass]
       def either_are_set?(*values)
         values.any? do |value|
+          !value.nil?
+        end
+      end
+
+      # Check that one and only one of the values are set (not nil).
+      #
+      # @param values [Array<Object>] to check if not nil.
+      # @return [TrueClass, FalseClass]
+      def only_one_is_set?(*values)
+        values.one? do |value|
           !value.nil?
         end
       end
