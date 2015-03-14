@@ -65,8 +65,8 @@ module Sensu
             invalid(check, "check command must be a string")
           must_be_a_string_if_set(check[:extension]) ||
             invalid(check, "check extension must be a string")
-          (must_be_a_string(check[:command]) ^ must_be_a_string(check[:extension])) ||
-            invalid(check, "one of check command or check extension must be set and a string, but not both")
+          (!check[:command].nil? ^ !check[:extension].nil?) ||
+            invalid(check, "one of check command or check extension must be set, but not both")
           must_be_a_numeric_if_set(check[:timeout]) ||
             invalid(check, "check timeout must be numeric")
           must_be_a_string_if_set(check[:source]) ||
