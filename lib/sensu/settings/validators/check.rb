@@ -61,8 +61,12 @@ module Sensu
             invalid(check, "check name must be a string")
           must_match_regex(/^[\w\.-]+$/, check[:name]) ||
             invalid(check, "check name cannot contain spaces or special characters")
-          must_be_a_string(check[:command]) ||
+          must_be_a_string_if_set(check[:command]) ||
             invalid(check, "check command must be a string")
+          must_be_a_string_if_set(check[:extension]) ||
+            invalid(check, "check extension must be a string")
+          (!check[:command].nil? ^ !check[:extension].nil?) ||
+            invalid(check, "either check command or extension must be set")
           must_be_a_numeric_if_set(check[:timeout]) ||
             invalid(check, "check timeout must be numeric")
           must_be_a_string_if_set(check[:source]) ||

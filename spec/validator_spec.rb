@@ -57,9 +57,8 @@ describe "Sensu::Settings::Validator" do
     reasons = @validator.failures.map do |failure|
       failure[:message]
     end
-    expect(reasons).to include("check name must be a string")
     expect(reasons).to include("check name cannot contain spaces or special characters")
-    expect(reasons).to include("check command must be a string")
+    expect(reasons).to include("either check command or extension must be set")
     expect(reasons).to include("check interval must be an integer")
     expect(reasons).to include("check subscribers must be an array")
     expect(reasons.size).to eq(5)
@@ -147,6 +146,15 @@ describe "Sensu::Settings::Validator" do
     check[:source] = "switch-%42%"
     @validator.validate_check(check)
     expect(@validator.reset).to eq(0)
+    check[:extension] = 'foo'
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
+    check.delete(:command)
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(0)
+    check[:extension] = true
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
   end
 
   it "can validate check subdue" do
