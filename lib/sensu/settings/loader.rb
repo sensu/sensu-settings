@@ -59,8 +59,13 @@ module Sensu
       end
 
       # Load settings from the environment.
-      # Loads: RABBITMQ_URL, REDIS_URL, REDISTOGO_URL, API_PORT, PORT
+      # Loads: SENSU_CLIENT_NAME, RABBITMQ_URL, REDIS_URL, REDISTOGO_URL, API_PORT, PORT
       def load_env
+        if ENV["SENSU_CLIENT_NAME"]
+          @settings[:client][:name] = ENV["SENSU_CLIENT_NAME"]
+          warning("using sensu client name environment variable",
+                  :name => @settings[:client][:name])
+        end
         if ENV["RABBITMQ_URL"]
           @settings[:rabbitmq] = ENV["RABBITMQ_URL"]
           warning("using rabbitmq url environment variable", :rabbitmq => @settings[:rabbitmq])
