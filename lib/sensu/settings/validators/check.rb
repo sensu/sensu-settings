@@ -2,6 +2,19 @@ module Sensu
   module Settings
     module Validators
       module Check
+        # Validate check source.
+        # Validates: source
+        #
+        # @param check [Hash] sensu check definition.
+        def validate_check_source(check)
+          if is_a_string?(check[:source])
+            must_match_regex(/^[\w\.-]+$/, check[:source]) ||
+              invalid(check, "check source cannot contain spaces or special characters")
+          else
+            invalid(check, "check source must be a string")
+          end
+        end
+
         # Validate check scheduling.
         # Validates: interval, standalone, subscribers
         #
@@ -69,14 +82,11 @@ module Sensu
             invalid(check, "either check command or extension must be set")
           must_be_a_numeric_if_set(check[:timeout]) ||
             invalid(check, "check timeout must be numeric")
-          must_be_a_string_if_set(check[:source]) ||
-            invalid(check, "check source must be a string")
+          validate_check_source(check) if check[:source]
           validate_check_scheduling(check)
           validate_check_handling(check)
           validate_check_flap_detection(check)
-          if check[:subdue]
-            validate_subdue(check)
-          end
+          validate_subdue(check) if check[:subdue]
         end
       end
     end

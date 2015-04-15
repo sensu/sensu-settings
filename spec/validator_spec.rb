@@ -145,6 +145,9 @@ describe "Sensu::Settings::Validator" do
     expect(@validator.reset).to eq(1)
     check[:source] = "switch-%42%"
     @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
+    check[:source] = "switch-42"
+    @validator.validate_check(check)
     expect(@validator.reset).to eq(0)
     check[:extension] = 'foo'
     @validator.validate_check(check)
