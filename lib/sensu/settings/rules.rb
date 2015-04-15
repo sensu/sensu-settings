@@ -42,6 +42,7 @@ module Sensu
       def must_be_a_string(value)
         value.is_a?(String)
       end
+      alias_method :is_a_string?, :must_be_a_string
 
       # Check that a value is a string, if set (not nil).
       #
