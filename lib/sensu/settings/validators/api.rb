@@ -20,14 +20,14 @@ module Sensu
         #
         # @param api [Hash] sensu api definition.
         def validate_api(api)
+          must_be_a_hash_if_set(api) ||
+            invalid(api, "api must be a hash")
           if is_a_hash?(api)
             must_be_an_integer_if_set(api[:port]) ||
               invalid(api, "api port must be an integer")
             must_be_a_string_if_set(api[:bind]) ||
               invalid(api, "api bind must be a string")
             validate_api_authentication(api)
-          else
-            invalid(api, "api must be a hash")
           end
         end
       end

@@ -595,6 +595,9 @@ describe "Sensu::Settings::Validator" do
   end
 
   it "can validate an api definition" do
+    api = nil
+    @validator.validate_api(api)
+    expect(@validator.reset).to eq(0)
     api = true
     @validator.validate_api(api)
     expect(@validator.reset).to eq(1)
