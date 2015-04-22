@@ -600,7 +600,7 @@ describe "Sensu::Settings::Validator" do
     expect(@validator.reset).to eq(1)
     api = {}
     @validator.validate_api(api)
-    expect(@validator.reset).to eq(1)
+    expect(@validator.reset).to eq(0)
     api[:port] = true
     @validator.validate_api(api)
     expect(@validator.reset).to eq(1)
