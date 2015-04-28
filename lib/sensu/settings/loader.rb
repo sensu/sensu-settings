@@ -86,7 +86,8 @@ module Sensu
         if File.file?(file) && File.readable?(file)
           begin
             warning("loading config file", :file => file)
-            contents = IO.read(file)
+            raw_contents = IO.read(file)
+            contents = raw_contents.sub("\xEF\xBB\xBF".force_encoding("UTF-8"), "").gsub("\r", "")
             config = MultiJson.load(contents, :symbolize_keys => true)
             merged = deep_merge(@settings, config)
             unless @loaded_files.empty?
