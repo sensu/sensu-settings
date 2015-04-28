@@ -86,8 +86,7 @@ module Sensu
         if File.file?(file) && File.readable?(file)
           begin
             warning("loading config file", :file => file)
-            raw_contents = IO.read(file)
-            contents = raw_contents.sub("\xEF\xBB\xBF".force_encoding("UTF-8"), "").gsub("\r", "")
+            contents = read_config_file(file)
             config = MultiJson.load(contents, :symbolize_keys => true)
             merged = deep_merge(@settings, config)
             unless @loaded_files.empty?
@@ -191,10 +190,30 @@ module Sensu
         @indifferent_access = true
       end
 
+      # Read a configuration file and force its encoding to 8-bit
+      # ASCII, ignoring invalid characters. If there is a UTF-8 bom,
+      # it will be removed. Some JSON parsers force ASCII but do not
+      # remove the UTF-8 bom if present, causing encoding conversion
+      # errors. This method is for consistency across MultiJson
+      # adapters and system platforms.
+      #
+      # @param [String] file path to read.
+      # @return [String] file contents.
+      def read_config_file(file)
+        contents = IO.read(file)
+        if contents.respond_to?(:force_encoding)
+          encoding = ::Encoding::ASCII_8BIT
+          contents = contents.force_encoding(encoding)
+          contents.sub!("\xEF\xBB\xBF".force_encoding(encoding), "")
+        end
+        contents
+      end
+
       # Deep merge two hashes.
       #
       # @param [Hash] hash_one to serve as base.
       # @param [Hash] hash_two to merge in.
+      # @return [Hash] deep merged hash.
       def deep_merge(hash_one, hash_two)
         merged = hash_one.dup
         hash_two.each do |key, value|
