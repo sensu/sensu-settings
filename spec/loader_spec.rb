@@ -97,6 +97,14 @@ describe "Sensu::Settings::Loader" do
     expect(messages).to include("ignoring config file")
   end
 
+  it "can load settings from a utf-8 encoded file with a bom" do
+    @loader.load_file(File.join(@assets_dir, "bom.json"))
+    warnings = @loader.warnings
+    failures = @loader.validate
+    expect(warnings.size).to eq(1)
+    expect(failures.size).to eq(0)
+  end
+
   it "can load settings from files in a directory" do
     @loader.load_directory(@config_dir)
     warnings = @loader.warnings

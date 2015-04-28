@@ -1,0 +1,7 @@
+﻿{
+	"client": {
+		"name": "bom",
+		"address": "utf-8",
+		"subscriptions": ["encoding"]
+	}
+}
