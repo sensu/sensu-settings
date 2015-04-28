@@ -205,6 +205,8 @@ module Sensu
           encoding = ::Encoding::ASCII_8BIT
           contents = contents.force_encoding(encoding)
           contents.sub!("\xEF\xBB\xBF".force_encoding(encoding), "")
+        else
+          contents.sub!(/^\357\273\277/, "")
         end
         contents
       end
