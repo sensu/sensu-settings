@@ -191,9 +191,9 @@ module Sensu
       end
 
       # Read a configuration file and force its encoding to 8-bit
-      # ASCII, ignoring invalid characters. If there is a UTF-8 bom,
+      # ASCII, ignoring invalid characters. If there is a UTF-8 BOM,
       # it will be removed. Some JSON parsers force ASCII but do not
-      # remove the UTF-8 bom if present, causing encoding conversion
+      # remove the UTF-8 BOM if present, causing encoding conversion
       # errors. This method is for consistency across MultiJson
       # adapters and system platforms.
       #
