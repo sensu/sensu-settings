@@ -30,11 +30,17 @@ describe "Sensu::Settings::Validator" do
     expect(@validator.reset).to eq(1)
     transport = {}
     @validator.validate_transport(transport)
-    expect(@validator.reset).to eq(0)
+    expect(@validator.reset).to eq(1)
     transport[:name] = 1
     @validator.validate_transport(transport)
     expect(@validator.reset).to eq(1)
     transport[:name] = "rabbitmq"
+    @validator.validate_transport(transport)
+    expect(@validator.reset).to eq(0)
+    transport[:reconnect_on_error] = "invalid"
+    @validator.validate_transport(transport)
+    expect(@validator.reset).to eq(1)
+    transport[:reconnect_on_error] = false
     @validator.validate_transport(transport)
     expect(@validator.reset).to eq(0)
   end

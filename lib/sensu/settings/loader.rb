@@ -14,15 +14,26 @@ module Sensu
 
       def initialize
         @warnings = []
-        @settings = {
-          :transport => {}
-        }
-        CATEGORIES.each do |category|
-          @settings[category] = {}
-        end
+        @settings = default_settings
         @indifferent_access = false
         @loaded_files = []
         self.class.create_category_methods
+      end
+
+      # Default settings.
+      #
+      # @return [Hash] settings.
+      def default_settings
+        default = {
+          :transport => {
+            :name => "rabbitmq",
+            :reconnect_on_error => true
+          }
+        }
+        CATEGORIES.each do |category|
+          default[category] = {}
+        end
+        default
       end
 
       # Create setting category accessors and methods to test the
