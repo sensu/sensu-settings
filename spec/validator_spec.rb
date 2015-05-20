@@ -134,6 +134,18 @@ describe "Sensu::Settings::Validator" do
     check[:handlers] = ["cat"]
     @validator.validate_check(check)
     expect(@validator.reset).to eq(0)
+    check[:ttl] = true
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
+    check[:ttl] = -1
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
+    check[:ttl] = 0
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
+    check[:ttl] = 1
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(0)
     check[:low_flap_threshold] = "25"
     @validator.validate_check(check)
     expect(@validator.reset).to eq(2)
