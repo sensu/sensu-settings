@@ -59,6 +59,7 @@ module Sensu
       def must_be_an_integer(value)
         value.is_a?(Integer)
       end
+      alias_method :is_an_integer?, :must_be_an_integer
 
       # Check that a value is an integer, if set (not nil).
       #

@@ -2,6 +2,32 @@ module Sensu
   module Settings
     module Validators
       module Check
+        # Validate check name.
+        # Validates: name
+        #
+        # @param check [Hash] sensu check definition.
+        def validate_check_name(check)
+          must_be_a_string(check[:name]) ||
+            invalid(check, "check name must be a string")
+          must_match_regex(/^[\w\.-]+$/, check[:name]) ||
+            invalid(check, "check name cannot contain spaces or special characters")
+        end
+
+        # Validate check execution.
+        # Validates: command, extension, timeout
+        #
+        # @param check [Hash] sensu check definition.
+        def validate_check_execution(check)
+          must_be_a_string_if_set(check[:command]) ||
+            invalid(check, "check command must be a string")
+          must_be_a_string_if_set(check[:extension]) ||
+            invalid(check, "check extension must be a string")
+          (!check[:command].nil? ^ !check[:extension].nil?) ||
+            invalid(check, "either check command or extension must be set")
+          must_be_a_numeric_if_set(check[:timeout]) ||
+            invalid(check, "check timeout must be numeric")
+        end
+
         # Validate check source.
         # Validates: source
         #
@@ -53,6 +79,19 @@ module Sensu
           end
         end
 
+        # Validate check ttl.
+        # Validates: ttl
+        #
+        # @param check [Hash] sensu check definition.
+        def validate_check_ttl(check)
+          if is_an_integer?(check[:ttl])
+            check[:ttl] > 0 ||
+              invalid(check, "check ttl must be greater than 0")
+          else
+            invalid(check, "check ttl must be an integer")
+          end
+        end
+
         # Validate check flap detection.
         # Validates: low_flap_threshold, high_flap_threshold
         #
@@ -70,21 +109,12 @@ module Sensu
         #
         # @param check [Hash] sensu check definition.
         def validate_check(check)
-          must_be_a_string(check[:name]) ||
-            invalid(check, "check name must be a string")
-          must_match_regex(/^[\w\.-]+$/, check[:name]) ||
-            invalid(check, "check name cannot contain spaces or special characters")
-          must_be_a_string_if_set(check[:command]) ||
-            invalid(check, "check command must be a string")
-          must_be_a_string_if_set(check[:extension]) ||
-            invalid(check, "check extension must be a string")
-          (!check[:command].nil? ^ !check[:extension].nil?) ||
-            invalid(check, "either check command or extension must be set")
-          must_be_a_numeric_if_set(check[:timeout]) ||
-            invalid(check, "check timeout must be numeric")
+          validate_check_name(check)
+          validate_check_execution(check)
           validate_check_source(check) if check[:source]
           validate_check_scheduling(check)
           validate_check_handling(check)
+          validate_check_ttl(check) if check[:ttl]
           validate_check_flap_detection(check)
           validate_subdue(check) if check[:subdue]
         end
