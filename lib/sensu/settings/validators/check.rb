@@ -2,15 +2,22 @@ module Sensu
   module Settings
     module Validators
       module Check
-        # Validate check execution.
-        # Validates: name, command, extension, timeout
+        # Validate check name.
+        # Validates: name
         #
         # @param check [Hash] sensu check definition.
-        def validate_check_execution(check)
+        def validate_check_name(check)
           must_be_a_string(check[:name]) ||
             invalid(check, "check name must be a string")
           must_match_regex(/^[\w\.-]+$/, check[:name]) ||
             invalid(check, "check name cannot contain spaces or special characters")
+        end
+
+        # Validate check execution.
+        # Validates: command, extension, timeout
+        #
+        # @param check [Hash] sensu check definition.
+        def validate_check_execution(check)
           must_be_a_string_if_set(check[:command]) ||
             invalid(check, "check command must be a string")
           must_be_a_string_if_set(check[:extension]) ||
@@ -102,6 +109,7 @@ module Sensu
         #
         # @param check [Hash] sensu check definition.
         def validate_check(check)
+          validate_check_name(check)
           validate_check_execution(check)
           validate_check_source(check) if check[:source]
           validate_check_scheduling(check)
