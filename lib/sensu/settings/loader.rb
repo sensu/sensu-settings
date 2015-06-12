@@ -1,5 +1,6 @@
 require "sensu/settings/validator"
 require "multi_json"
+require "tempfile"
 
 module Sensu
   module Settings
@@ -135,11 +136,26 @@ module Sensu
         end
       end
 
+      # Create a temporary file containing the colon delimited list of
+      # loaded configuration files.
+      #
+      # @return [String] tempfile path.
+      def create_loaded_tempfile!
+        file = Tempfile.new("sensu_loaded_files")
+        file.write(@loaded_files.join(":"))
+        file.close
+        file.path
+      end
+
       # Set Sensu settings related environment variables. This method
-      # currently sets SENSU_CONFIG_FILES, a colon delimited list of
-      # loaded config files.
+      # sets `SENSU_LOADED_TEMPFILE` to a new temporary file path,
+      # a file containing the colon delimited list of loaded
+      # configuration files (using `create_loaded_tempfile!()`. The
+      # environment variable `SENSU_CONFIG_FILES` has been removed,
+      # due to the exec ARG_MAX (E2BIG) error when spawning processes
+      # after loading many configuration files (e.g. > 2000).
       def set_env!
-        ENV["SENSU_CONFIG_FILES"] = @loaded_files.join(":")
+        ENV["SENSU_LOADED_TEMPFILE"] = create_loaded_tempfile!
       end
 
       # Validate the loaded settings.
