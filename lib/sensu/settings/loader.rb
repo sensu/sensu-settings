@@ -136,7 +136,7 @@ module Sensu
         end
       end
 
-      # Create a temporary file containing a colon delimited list of
+      # Create a temporary file containing the colon delimited list of
       # loaded configuration files.
       #
       # @return [String] tempfile path.
@@ -148,16 +148,14 @@ module Sensu
       end
 
       # Set Sensu settings related environment variables. This method
-      # sets `SENSU_LOADED_TEMPFILE` to a new temporary file,
-      # containing a colon delimited list of loaded configuration
-      # files (using `create_loaded_tempfile!()`. The environment
-      # variable `SENSU_CONFIG_FILES` is also set to a colon delimited
-      # list of loaded files, however, this variable is DEPRECATED due
-      # to ARG_MAX (E2BIG).
+      # sets `SENSU_LOADED_TEMPFILE` to a new temporary file path,
+      # a file containing the colon delimited list of loaded
+      # configuration files (using `create_loaded_tempfile!()`. The
+      # environment variable `SENSU_CONFIG_FILES` has been removed,
+      # due to the ARG_MAX (E2BIG) error when many configuration
+      # files.
       def set_env!
         ENV["SENSU_LOADED_TEMPFILE"] = create_loaded_tempfile!
-        # SENSU_CONFIG_FILES is DEPRECATED!
-        ENV["SENSU_CONFIG_FILES"] = @loaded_files.join(":")
       end
 
       # Validate the loaded settings.
