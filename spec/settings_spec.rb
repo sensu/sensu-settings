@@ -38,7 +38,9 @@ describe "Sensu::Settings" do
     expect(settings[:checks][:merger][:command]).to eq("echo -n merger")
     expect(settings[:checks][:merger][:subscribers]).to eq(["foo", "bar"])
     expect(settings[:checks][:nested][:command]).to eq("true")
-    expect(ENV["SENSU_CONFIG_FILES"].split(":")).to eq(settings.loaded_files)
+    expect(ENV["SENSU_LOADED_TEMPFILE"]).to match(/sensu_loaded_files/)
+    loaded_files = IO.read(ENV["SENSU_LOADED_TEMPFILE"])
+    expect(loaded_files.split(":")).to eq(settings.loaded_files)
     ENV["RABBITMQ_URL"] = nil
   end
 

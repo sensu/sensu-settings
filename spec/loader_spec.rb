@@ -133,7 +133,6 @@ describe "Sensu::Settings::Loader" do
     expect(ENV["SENSU_LOADED_TEMPFILE"]).to match(/sensu_loaded_files/)
     loaded_files = IO.read(ENV["SENSU_LOADED_TEMPFILE"])
     expect(loaded_files.split(":")).to eq(@loader.loaded_files)
-    expect(ENV["SENSU_CONFIG_FILES"].split(":")).to eq(@loader.loaded_files)
   end
 
   it "can load settings and determine if certain definitions exist" do
