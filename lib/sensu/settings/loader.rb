@@ -152,8 +152,8 @@ module Sensu
       # a file containing the colon delimited list of loaded
       # configuration files (using `create_loaded_tempfile!()`. The
       # environment variable `SENSU_CONFIG_FILES` has been removed,
-      # due to the ARG_MAX (E2BIG) error when many configuration
-      # files.
+      # due to the exec ARG_MAX (E2BIG) error when spawning processes
+      # after loading many configuration files (e.g. > 2000).
       def set_env!
         ENV["SENSU_LOADED_TEMPFILE"] = create_loaded_tempfile!
       end
