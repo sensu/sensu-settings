@@ -327,6 +327,7 @@ module Sensu
       # @return [String] tempfile path.
       def create_loaded_tempfile!
         file = Tempfile.new("sensu_loaded_files")
+        ObjectSpace.undefine_finalizer(file)
         file.write(@loaded_files.join(":"))
         file.close
         file.path
