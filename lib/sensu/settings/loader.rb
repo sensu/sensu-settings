@@ -1,6 +1,7 @@
 require "sensu/settings/validator"
 require "multi_json"
 require "tempfile"
+require "socket"
 
 module Sensu
   module Settings
@@ -71,29 +72,16 @@ module Sensu
       end
 
       # Load settings from the environment.
-      # Loads: SENSU_CLIENT_NAME, RABBITMQ_URL, REDIS_URL, REDISTOGO_URL, API_PORT, PORT
+      #
+      # Loads: SENSU_TRANSPORT_NAME, RABBITMQ_URL, REDIS_URL,
+      #        SENSU_CLIENT_NAME, SENSU_CLIENT_ADDRESS
+      #        SENSU_CLIENT_SUBSCRIPTIONS, SENSU_API_PORT
       def load_env
-        if ENV["SENSU_CLIENT_NAME"]
-          @settings[:client][:name] = ENV["SENSU_CLIENT_NAME"]
-          warning("using sensu client name environment variable",
-                  :name => @settings[:client][:name])
-        end
-        if ENV["RABBITMQ_URL"]
-          @settings[:rabbitmq] = ENV["RABBITMQ_URL"]
-          warning("using rabbitmq url environment variable", :rabbitmq => @settings[:rabbitmq])
-        end
-        ENV["REDIS_URL"] ||= ENV["REDISTOGO_URL"]
-        if ENV["REDIS_URL"]
-          @settings[:redis] = ENV["REDIS_URL"]
-          warning("using redis url environment variable", :redis => @settings[:redis])
-        end
-        ENV["API_PORT"] ||= ENV["PORT"]
-        if ENV["API_PORT"]
-          @settings[:api] ||= {}
-          @settings[:api][:port] = ENV["API_PORT"].to_i
-          warning("using api port environment variable", :api => @settings[:api])
-        end
-        @indifferent_access = false
+        load_transport_env
+        load_rabbitmq_env
+        load_redis_env
+        load_client_env
+        load_api_env
       end
 
       # Load settings from a JSON file.
@@ -139,17 +127,6 @@ module Sensu
         Dir.glob(File.join(path, "**/*.json")).each do |file|
           load_file(file)
         end
-      end
-
-      # Create a temporary file containing the colon delimited list of
-      # loaded configuration files.
-      #
-      # @return [String] tempfile path.
-      def create_loaded_tempfile!
-        file = Tempfile.new("sensu_loaded_files")
-        file.write(@loaded_files.join(":"))
-        file.close
-        file.path
       end
 
       # Set Sensu settings related environment variables. This method
@@ -222,6 +199,68 @@ module Sensu
         @indifferent_access = true
       end
 
+      # Load Sensu transport settings from the environment. This
+      # method sets the Sensu transport name to `SENSU_TRANSPORT_NAME`
+      # if set.
+      def load_transport_env
+        if ENV["SENSU_TRANSPORT_NAME"]
+          @settings[:transport][:name] = ENV["SENSU_TRANSPORT_NAME"]
+          warning("using sensu transport name environment variable", :transport => @settings[:transport])
+          @indifferent_access = false
+        end
+      end
+
+      # Load Sensu RabbitMQ settings from the environment. This method
+      # sets the RabbitMQ settings to `RABBITMQ_URL` if set. The Sensu
+      # RabbitMQ transport accepts a URL string for options.
+      def load_rabbitmq_env
+        if ENV["RABBITMQ_URL"]
+          @settings[:rabbitmq] = ENV["RABBITMQ_URL"]
+          warning("using rabbitmq url environment variable", :rabbitmq => @settings[:rabbitmq])
+          @indifferent_access = false
+        end
+      end
+
+      # Load Sensu Redis settings from the environment. This method
+      # sets the Redis settings to `REDIS_URL` if set. The Sensu Redis
+      # library accepts a URL string for options, this applies to data
+      # storage and the transport.
+      def load_redis_env
+        if ENV["REDIS_URL"]
+          @settings[:redis] = ENV["REDIS_URL"]
+          warning("using redis url environment variable", :redis => @settings[:redis])
+          @indifferent_access = false
+        end
+      end
+
+      # Load Sensu client settings from the environment. This method
+      # loads client settings from several variables if
+      # `SENSU_CLIENT_NAME` is set: `SENSU_CLIENT_NAME`,
+      # `SENSU_CLIENT_ADDRESS`, and `SENSU_CLIENT_SUBSCRIPTIONS`. The
+      # Sensu client address defaults to the current system hostname
+      # and subscriptions defaults to an empty array.
+      def load_client_env
+        if ENV["SENSU_CLIENT_NAME"]
+          @settings[:client] ||= {}
+          @settings[:client][:name] = ENV["SENSU_CLIENT_NAME"]
+          @settings[:client][:address] = ENV.fetch("SENSU_CLIENT_ADDRESS", system_hostname)
+          @settings[:client][:subscriptions] = ENV.fetch("SENSU_CLIENT_SUBSCRIPTIONS", "").split(",")
+          warning("using sensu client environment variables", :client => @settings[:client])
+          @indifferent_access = false
+        end
+      end
+
+      # Load Sensu API settings from the environment. This method sets
+      # the API port to `SENSU_API_PORT` if set.
+      def load_api_env
+        if ENV["SENSU_API_PORT"]
+          @settings[:api] ||= {}
+          @settings[:api][:port] = ENV["SENSU_API_PORT"].to_i
+          warning("using api port environment variable", :api => @settings[:api])
+          @indifferent_access = false
+        end
+      end
+
       # Read a configuration file and force its encoding to 8-bit
       # ASCII, ignoring invalid characters. If there is a UTF-8 BOM,
       # it will be removed. Some JSON parsers force ASCII but do not
@@ -282,11 +321,31 @@ module Sensu
         end
       end
 
+      # Create a temporary file containing the colon delimited list of
+      # loaded configuration files.
+      #
+      # @return [String] tempfile path.
+      def create_loaded_tempfile!
+        file = Tempfile.new("sensu_loaded_files")
+        file.write(@loaded_files.join(":"))
+        file.close
+        file.path
+      end
+
       # Retrieve Sensu service name.
       #
       # @return [String] service name.
       def sensu_service_name
         File.basename($0).split("-").last
+      end
+
+      # Retrieve the system hostname. If the hostname cannot be
+      # determined and an error is thrown, return "unknown", the same
+      # value Sensu uses for JIT clients.
+      #
+      # @return [String] system hostname.
+      def system_hostname
+        Socket.gethostname rescue "unknown"
       end
 
       # Record a warning.

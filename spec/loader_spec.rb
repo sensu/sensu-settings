@@ -25,34 +25,65 @@ describe "Sensu::Settings::Loader" do
     expect(failures.size).to eq(0)
   end
 
+  it "can load Sensu transport settings from the environment" do
+    ENV["SENSU_TRANSPORT_NAME"] = "redis"
+    @loader.load_env
+    expect(@loader.warnings.size).to eq(1)
+    warning = @loader.warnings.shift
+    transport = warning[:transport]
+    expect(transport[:name]).to eq("redis")
+    ENV["SENSU_TRANSPORT_NAME"] = nil
+  end
+
   it "can load RabbitMQ settings from the environment" do
     ENV["RABBITMQ_URL"] = "amqp://guest:guest@localhost:5672/"
     @loader.load_env
     expect(@loader.warnings.size).to eq(1)
+    warning = @loader.warnings.shift
+    expect(warning[:rabbitmq]).to eq("amqp://guest:guest@localhost:5672/")
     ENV["RABBITMQ_URL"] = nil
   end
 
   it "can load Redis settings from the environment" do
-    ENV["REDIS_URL"] = "redis://username:password@localhost:6789"
+    ENV["REDIS_URL"] = "redis://:password@localhost:6789"
     @loader.load_env
     expect(@loader.warnings.size).to eq(1)
+    warning = @loader.warnings.shift
+    expect(warning[:redis]).to eq("redis://:password@localhost:6789")
     ENV["REDIS_URL"] = nil
   end
 
-  it "can load Sensu API settings from the environment" do
-    ENV["API_PORT"] = "4567"
+  it "can load Sensu client settings with defaults from the environment" do
+    ENV["SENSU_CLIENT_NAME"] = "i-424242"
     @loader.load_env
     expect(@loader.warnings.size).to eq(1)
-    ENV["API_PORT"] = nil
+    warning = @loader.warnings.shift
+    client = warning[:client]
+    expect(client[:name]).to eq("i-424242")
+    expect(client[:address]).to be_kind_of(String)
+    expect(client[:subscriptions]).to eq([])
+    ENV["SENSU_CLIENT_NAME"] = nil
   end
 
-  it "can load Redis and Sensu API settings from the environment using alternative variables" do
-    ENV["REDISTOGO_URL"] = "redis://username:password@localhost:6789"
-    ENV["PORT"] = "4567"
+  it "can load Sensu client settings with defaults from the environment" do
+    ENV["SENSU_CLIENT_NAME"] = "i-424242"
+    ENV["SENSU_CLIENT_ADDRESS"] = "127.0.0.1"
+    ENV["SENSU_CLIENT_SUBSCRIPTIONS"] = "foo,bar,baz"
     @loader.load_env
-    expect(@loader.warnings.size).to eq(2)
-    ENV["REDISTOGO_URL"] = nil
-    ENV["PORT"] = nil
+    expect(@loader.warnings.size).to eq(1)
+    warning = @loader.warnings.shift
+    client = warning[:client]
+    expect(client[:name]).to eq("i-424242")
+    expect(client[:address]).to eq("127.0.0.1")
+    expect(client[:subscriptions]).to eq(["foo", "bar", "baz"])
+    ENV["SENSU_CLIENT_NAME"] = nil
+  end
+
+  it "can load Sensu API settings from the environment" do
+    ENV["SENSU_API_PORT"] = "4567"
+    @loader.load_env
+    expect(@loader.warnings.size).to eq(1)
+    ENV["SENSU_API_PORT"] = nil
   end
 
   it "can load settings from a file" do
