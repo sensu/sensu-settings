@@ -74,8 +74,8 @@ module Sensu
       # Load settings from the environment.
       #
       # Loads: SENSU_TRANSPORT_NAME, RABBITMQ_URL, REDIS_URL,
-      #        SENSU_API_PORT, SENSU_CLIENT_NAME, SENSU_CLIENT_ADDRESS
-      #        SENSU_CLIENT_SUBSCRIPTIONS
+      #        SENSU_CLIENT_NAME, SENSU_CLIENT_ADDRESS
+      #        SENSU_CLIENT_SUBSCRIPTIONS, SENSU_API_PORT
       def load_env
         load_transport_env
         load_rabbitmq_env
