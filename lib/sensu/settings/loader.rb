@@ -1,6 +1,6 @@
 require "sensu/settings/validator"
 require "multi_json"
-require "tempfile"
+require "tmpdir"
 require "socket"
 
 module Sensu
@@ -326,11 +326,10 @@ module Sensu
       #
       # @return [String] tempfile path.
       def create_loaded_tempfile!
-        file = Tempfile.new("sensu_loaded_files")
-        ObjectSpace.undefine_finalizer(file)
-        file.write(@loaded_files.join(":"))
-        file.close
-        file.path
+        file_name = "sensu_#{sensu_service_name}_loaded_files"
+        path = File.join(Dir.tmpdir, file_name)
+        IO.write(path, @loaded_files.join(":"))
+        path
       end
 
       # Retrieve Sensu service name.
