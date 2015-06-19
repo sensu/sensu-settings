@@ -161,7 +161,7 @@ describe "Sensu::Settings::Loader" do
     @loader.load_directory(@config_dir)
     expect(@loader.loaded_files.size).to eq(3)
     @loader.set_env!
-    expect(ENV["SENSU_LOADED_TEMPFILE"]).to match(/sensu_loaded_files/)
+    expect(ENV["SENSU_LOADED_TEMPFILE"]).to match(/sensu_rspec_loaded_files/)
     loaded_files = IO.read(ENV["SENSU_LOADED_TEMPFILE"])
     expect(loaded_files.split(":")).to eq(@loader.loaded_files)
   end

@@ -1,6 +1,6 @@
 require "sensu/settings/validator"
 require "multi_json"
-require "tempfile"
+require "tmpdir"
 require "socket"
 
 module Sensu
@@ -322,14 +322,22 @@ module Sensu
       end
 
       # Create a temporary file containing the colon delimited list of
-      # loaded configuration files.
+      # loaded configuration files. Ruby TempFile is not used to
+      # create the temporary file as it would be removed if the Sensu
+      # service daemonizes (fork/detach). The file is created in the
+      # system temporary file directory for the platform (Linux,
+      # Windows, etc.) and the file name contains the Sensu service
+      # name to reduce the likelihood of one Sensu service affecting
+      # another.
       #
       # @return [String] tempfile path.
       def create_loaded_tempfile!
-        file = Tempfile.new("sensu_loaded_files")
-        file.write(@loaded_files.join(":"))
-        file.close
-        file.path
+        file_name = "sensu_#{sensu_service_name}_loaded_files"
+        path = File.join(Dir.tmpdir, file_name)
+        File.open(path, "w") do |file|
+          file.write(@loaded_files.join(":"))
+        end
+        path
       end
 
       # Retrieve Sensu service name.
