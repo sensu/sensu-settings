@@ -1,0 +1,11 @@
+{
+  "checks": {
+    "symlinked": {
+      "command": "echo -n symlinked",
+      "subscribers": [
+        "baz"
+      ],
+     "interval": 60
+    }
+  }
+}
