@@ -139,7 +139,7 @@ describe "Sensu::Settings::Loader" do
   it "can load settings from files in a directory" do
     @loader.load_directory(@config_dir)
     warnings = @loader.warnings
-    expect(warnings.size).to eq(4)
+    expect(warnings.size).to eq(6)
     messages = warnings.map do |warning|
       warning[:message]
     end
@@ -159,7 +159,7 @@ describe "Sensu::Settings::Loader" do
   it "can set environment variables for child processes" do
     @loader.load_file(@config_file)
     @loader.load_directory(@config_dir)
-    expect(@loader.loaded_files.size).to eq(3)
+    expect(@loader.loaded_files.size).to eq(4)
     @loader.set_env!
     expect(ENV["SENSU_LOADED_TEMPFILE"]).to match(/sensu_rspec_loaded_files/)
     loaded_files = IO.read(ENV["SENSU_LOADED_TEMPFILE"])

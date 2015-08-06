@@ -124,7 +124,7 @@ module Sensu
       def load_directory(directory)
         warning("loading config files from directory", :directory => directory)
         path = directory.gsub(/\\(?=\S)/, "/")
-        Dir.glob(File.join(path, "**/*.json")).each do |file|
+        Dir.glob(File.join(path, "**{,/*/**}/*.json")).uniq.each do |file|
           load_file(file)
         end
       end
