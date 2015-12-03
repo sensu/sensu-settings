@@ -110,6 +110,8 @@ module Sensu
               invalid(client, "client name cannot contain spaces or special characters")
             must_be_a_string(client[:address]) ||
               invalid(client, "client address must be a string")
+            must_be_a_string_if_set(client[:client_key]) ||
+              invalid(client, "client key must be a string")
             validate_client_safe_mode(client)
             validate_client_subscriptions(client)
             validate_client_socket(client)
