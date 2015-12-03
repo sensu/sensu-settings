@@ -332,8 +332,9 @@ module Sensu
       #
       # @return [String] tempfile path.
       def create_loaded_tempfile!
-        file_name = "sensu_#{sensu_service_name}_loaded_files"
-        path = File.join(Dir.tmpdir, file_name)
+        dir = ENV["SENSU_LOADED_TEMPFILE_DIR"] || Dir.tmpdir
+				file_name = "sensu_#{sensu_service_name}_loaded_files"
+        path = File.join(dir, file_name)
         File.open(path, "w") do |file|
           file.write(@loaded_files.join(":"))
         end
