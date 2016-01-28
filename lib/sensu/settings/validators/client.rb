@@ -96,6 +96,15 @@ module Sensu
           end
         end
 
+        # Validate client signature.
+        # Validates: signature
+        #
+        # @param client [Hash] sensu client definition.
+        def validate_client_signature(client)
+          must_be_a_string_if_set(client[:signature]) ||
+            invalid(client, "client signature must be a string")
+        end
+
         # Validate a Sensu client definition.
         # Validates: name, address, safe_mode
         #
@@ -115,6 +124,7 @@ module Sensu
             validate_client_socket(client)
             validate_client_keepalive(client)
             validate_client_redact(client)
+            validate_client_signature(client)
           end
         end
       end

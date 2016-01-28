@@ -519,6 +519,12 @@ describe "Sensu::Settings::Validator" do
     client[:safe_mode] = false
     @validator.validate_client(client)
     expect(@validator.reset).to eq(0)
+    client[:signature] = 1
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(1)
+    client[:signature] = "foo"
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(0)
   end
 
   it "can validate client socket" do
