@@ -105,6 +105,33 @@ module Sensu
             invalid(client, "client signature must be a string")
         end
 
+        # Validate client registration handlers.
+        # Validates: registration (handler, handlers)
+        #
+        # @param client [Hash] sensu client definition.
+        def validate_client_registration_handlers(client)
+          must_be_a_string_if_set(client[:registration][:handler]) ||
+            invalid(client, "client registration handler must be a string")
+          must_be_an_array_if_set(client[:registration][:handlers]) ||
+            invalid(client, "client registration handlers must be an array")
+          if is_an_array?(client[:registration][:handlers])
+            items_must_be_strings(client[:registration][:handlers]) ||
+              invalid(client, "client registration handlers must each be a string")
+          end
+        end
+
+        # Validate client registration.
+        # Validates: registration
+        #
+        # @param client [Hash] sensu client definition.
+        def validate_client_registration(client)
+          must_be_a_hash_if_set(client[:registration]) ||
+            invalid(client, "client registration must be a hash")
+          if is_a_hash?(client[:registration])
+            validate_client_registration_handlers(client)
+          end
+        end
+
         # Validate a Sensu client definition.
         # Validates: name, address, safe_mode
         #
@@ -125,6 +152,7 @@ module Sensu
             validate_client_keepalive(client)
             validate_client_redact(client)
             validate_client_signature(client)
+            validate_client_registration(client)
           end
         end
       end
