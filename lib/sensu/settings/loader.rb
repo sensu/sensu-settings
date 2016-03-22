@@ -1,5 +1,5 @@
 require "sensu/settings/validator"
-require "multi_json"
+require "sensu/json"
 require "tmpdir"
 require "socket"
 
@@ -92,7 +92,7 @@ module Sensu
           begin
             warning("loading config file", :file => file)
             contents = read_config_file(file)
-            config = MultiJson.load(contents, :symbolize_keys => true)
+            config = Sensu::JSON.load(contents)
             merged = deep_merge(@settings, config)
             unless @loaded_files.empty?
               changes = deep_diff(@settings, merged)
@@ -104,7 +104,7 @@ module Sensu
             @settings = merged
             @indifferent_access = false
             @loaded_files << file
-          rescue MultiJson::ParseError => error
+          rescue Sensu::JSON::ParseError => error
             warning("config file must be valid json", {
               :file => file,
               :error => error.to_s
@@ -265,7 +265,7 @@ module Sensu
       # ASCII, ignoring invalid characters. If there is a UTF-8 BOM,
       # it will be removed. Some JSON parsers force ASCII but do not
       # remove the UTF-8 BOM if present, causing encoding conversion
-      # errors. This method is for consistency across MultiJson
+      # errors. This method is for consistency across Sensu::JSON
       # adapters and system platforms.
       #
       # @param [String] file path to read.
