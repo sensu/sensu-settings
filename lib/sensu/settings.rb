@@ -24,8 +24,9 @@ module Sensu
             @loader.load_directory(directory)
           end
         end
-        @loader.validate
-        @loader.set_env!
+        if @loader.validate.empty?
+          @loader.set_env!
+        end
         @loader
       rescue Loader::Error
         @loader
