@@ -49,4 +49,11 @@ describe "Sensu::Settings" do
     expect(settings[:checks][:merger][:command]).to eq("echo -n merger")
     expect(settings[:checks][:app_http_endpoint][:command]).to eq("check-http.rb -u https://localhost/ping -q pong")
   end
+
+  it "can catch load errors" do
+    settings = Sensu::Settings.load(:config_file => "/tmp/bananaphone")
+    expect(settings.errors.length).to eq(1)
+    error = settings.errors.first
+    expect(error[:message]).to include("config file does not exist or is not readable")
+  end
 end

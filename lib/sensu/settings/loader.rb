@@ -6,9 +6,15 @@ require "socket"
 module Sensu
   module Settings
     class Loader
+      class Error < RuntimeError; end
+
       # @!attribute [r] warnings
       #   @return [Array] loader warnings.
       attr_reader :warnings
+
+      # @!attribute [r] errors
+      #   @return [Array] loader errors.
+      attr_reader :errors
 
       # @!attribute [r] loaded_files
       #   @return [Array] loaded config files.
@@ -16,6 +22,7 @@ module Sensu
 
       def initialize
         @warnings = []
+        @errors = []
         @settings = default_settings
         @indifferent_access = false
         @loaded_files = []
@@ -105,15 +112,13 @@ module Sensu
             @indifferent_access = false
             @loaded_files << file
           rescue Sensu::JSON::ParseError => error
-            warning("config file must be valid json", {
+            load_error("config file must be valid json", {
               :file => file,
               :error => error.to_s
             })
-            warning("ignoring config file", :file => file)
           end
         else
-          warning("config file does not exist or is not readable", :file => file)
-          warning("ignoring config file", :file => file)
+          load_error("config file does not exist or is not readable", :file => file)
         end
       end
 
@@ -145,7 +150,7 @@ module Sensu
       # @return [Array] validation failures.
       def validate
         validator = Validator.new
-        validator.run(@settings, sensu_service_name)
+        @errors += validator.run(@settings, sensu_service_name)
       end
 
       private
@@ -366,6 +371,17 @@ module Sensu
         @warnings << {
           :message => message
         }.merge(data)
+      end
+
+      # Record a load error and raise a load error exception.
+      #
+      # @param message [String] load error message.
+      # @param data [Hash] load error context.
+      def load_error(message, data={})
+        @errors << {
+          :message => message
+        }.merge(data)
+        raise(Error, message)
       end
     end
   end

@@ -24,7 +24,10 @@ module Sensu
             @loader.load_directory(directory)
           end
         end
+        @loader.validate
         @loader.set_env!
+        @loader
+      rescue Loader::Error
         @loader
       end
 
