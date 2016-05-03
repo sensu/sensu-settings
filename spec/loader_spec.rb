@@ -106,26 +106,21 @@ describe "Sensu::Settings::Loader" do
   end
 
   it "can attempt to load settings from a nonexistent file" do
-    @loader.load_file("/tmp/bananaphone")
-    warnings = @loader.warnings
-    expect(warnings.size).to eq(2)
-    messages = warnings.map do |warning|
-      warning[:message]
-    end
-    expect(messages).to include("config file does not exist or is not readable")
-    expect(messages).to include("ignoring config file")
+    expect {
+      @loader.load_file("/tmp/bananaphone")
+    }.to raise_error(Sensu::Settings::Loader::Error)
+    expect(@loader.errors.length).to eq(1)
+    error = @loader.errors.first
+    expect(error[:message]).to include("config file does not exist or is not readable")
   end
 
   it "can attempt to load settings from a file with invalid JSON" do
-    @loader.load_file(File.join(@assets_dir, "invalid.json"))
-    warnings = @loader.warnings
-    expect(warnings.size).to eq(3)
-    messages = warnings.map do |warning|
-      warning[:message]
-    end
-    expect(messages).to include("loading config file")
-    expect(messages).to include("config file must be valid json")
-    expect(messages).to include("ignoring config file")
+    expect {
+      @loader.load_file(File.join(@assets_dir, "invalid.json"))
+    }.to raise_error(Sensu::Settings::Loader::Error)
+    expect(@loader.errors.length).to eq(1)
+    error = @loader.errors.first
+    expect(error[:message]).to include("config file must be valid json")
   end
 
   it "can load settings from a utf-8 encoded file with a bom" do
