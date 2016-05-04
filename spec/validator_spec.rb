@@ -74,6 +74,9 @@ describe "Sensu::Settings::Validator" do
     check = {:name => "foo bar"}
     @validator.validate_check(check)
     expect(@validator.reset).to eq(4)
+    check[:name] = "foo\nbar"
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(4)
     check[:name] = "foo"
     @validator.validate_check(check)
     expect(@validator.reset).to eq(3)
@@ -478,6 +481,9 @@ describe "Sensu::Settings::Validator" do
     @validator.validate_client(client)
     expect(@validator.reset).to eq(4)
     client[:name] = "foo bar"
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(3)
+    client[:name] = "foo\nbar"
     @validator.validate_client(client)
     expect(@validator.reset).to eq(3)
     client[:name] = "foo"
