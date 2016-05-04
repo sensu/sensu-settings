@@ -151,7 +151,7 @@ module Sensu
           if is_a_hash?(client)
             must_be_a_string(client[:name]) ||
               invalid(client, "client name must be a string")
-            must_match_regex(/^[\w\.-]+$/, client[:name]) ||
+            must_match_regex(/\A[\w\.-]+\z/, client[:name]) ||
               invalid(client, "client name cannot contain spaces or special characters")
             must_be_a_string(client[:address]) ||
               invalid(client, "client address must be a string")

@@ -9,7 +9,7 @@ module Sensu
         def validate_check_name(check)
           must_be_a_string(check[:name]) ||
             invalid(check, "check name must be a string")
-          must_match_regex(/^[\w\.-]+$/, check[:name]) ||
+          must_match_regex(/\A[\w\.-]+\z/, check[:name]) ||
             invalid(check, "check name cannot contain spaces or special characters")
         end
 
