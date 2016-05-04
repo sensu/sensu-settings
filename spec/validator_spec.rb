@@ -555,6 +555,28 @@ describe "Sensu::Settings::Validator" do
     expect(@validator.reset).to eq(0)
   end
 
+  it "can validate client keepalives" do
+    client = {
+      :name => "foo",
+      :address => "127.0.0.1",
+      :subscriptions => ["bar"]
+    }
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(0)
+    client[:keepalives] = 1
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(1)
+    client[:keepalives] = "true"
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(1)
+    client[:keepalives] = true
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(0)
+    client[:keepalives] = false
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(0)
+  end
+
   it "can validate client keepalive" do
     client = {
       :name => "foo",

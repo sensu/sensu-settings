@@ -39,6 +39,15 @@ module Sensu
           end
         end
 
+        # Validate client keepalives.
+        # Validates: keepalives
+        #
+        # @param client [Hash] sensu client definition.
+        def validate_client_keepalives(client)
+          must_be_boolean_if_set(client[:keepalives]) ||
+            invalid(client, "client keepalives must be boolean")
+        end
+
         # Validate client keepalive handlers.
         # Validates: keepalive (handler, handlers)
         #
@@ -149,6 +158,7 @@ module Sensu
             validate_client_safe_mode(client)
             validate_client_subscriptions(client)
             validate_client_socket(client)
+            validate_client_keepalives(client)
             validate_client_keepalive(client)
             validate_client_redact(client)
             validate_client_signature(client)
