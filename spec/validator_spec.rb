@@ -21,7 +21,46 @@ describe "Sensu::Settings::Validator" do
     expect(reasons).to include("filters must be a hash")
     expect(reasons).to include("mutators must be a hash")
     expect(reasons).to include("handlers must be a hash")
-    expect(reasons.size).to eq(5)
+    expect(reasons.size).to eq(6)
+  end
+
+  it "can validate a sensu definition" do
+    sensu = nil
+    @validator.validate_sensu(sensu)
+    expect(@validator.reset).to eq(1)
+    sensu = 1
+    @validator.validate_sensu(sensu)
+    expect(@validator.reset).to eq(1)
+    sensu = {}
+    @validator.validate_sensu(sensu)
+    expect(@validator.reset).to eq(1)
+    sensu[:spawn] = 1
+    @validator.validate_sensu(sensu)
+    expect(@validator.reset).to eq(1)
+    sensu[:spawn] = {}
+    @validator.validate_sensu(sensu)
+    expect(@validator.reset).to eq(1)
+    sensu[:spawn][:limit] = "1"
+    @validator.validate_sensu(sensu)
+    expect(@validator.reset).to eq(1)
+    sensu[:spawn][:limit] = 20
+    @validator.validate_sensu(sensu)
+    expect(@validator.reset).to eq(0)
+  end
+
+  it "can run, validating sensu" do
+    settings = {
+      :sensu => {
+        :spawn => {
+          :limit => "20"
+        }
+      }
+    }
+    @validator.run(settings)
+    expect(@validator.reset).to eq(6)
+    settings[:sensu][:spawn][:limit] = 20
+    @validator.run(settings)
+    expect(@validator.reset).to eq(5)
   end
 
   it "can validate a transport definition" do
@@ -52,10 +91,10 @@ describe "Sensu::Settings::Validator" do
       }
     }
     @validator.run(settings)
-    expect(@validator.reset).to eq(5)
+    expect(@validator.reset).to eq(6)
     settings[:transport][:name] = "rabbitmq"
     @validator.run(settings)
-    expect(@validator.reset).to eq(4)
+    expect(@validator.reset).to eq(5)
   end
 
   it "can validate an empty check definition" do
@@ -258,10 +297,10 @@ describe "Sensu::Settings::Validator" do
       }
     }
     @validator.run(settings)
-    expect(@validator.reset).to eq(5)
+    expect(@validator.reset).to eq(6)
     settings[:checks][:foo][:interval] = 1
     @validator.run(settings)
-    expect(@validator.reset).to eq(4)
+    expect(@validator.reset).to eq(5)
   end
 
   it "can validate a filter definition" do
@@ -671,10 +710,10 @@ describe "Sensu::Settings::Validator" do
       }
     }
     @validator.run(settings, "client")
-    expect(@validator.reset).to eq(6)
+    expect(@validator.reset).to eq(7)
     settings[:client][:subscriptions] = ["bar"]
     @validator.run(settings, "client")
-    expect(@validator.reset).to eq(5)
+    expect(@validator.reset).to eq(6)
   end
 
   it "can validate an api definition" do
@@ -720,9 +759,9 @@ describe "Sensu::Settings::Validator" do
       }
     }
     @validator.run(settings, "api")
-    expect(@validator.reset).to eq(6)
+    expect(@validator.reset).to eq(7)
     settings[:api][:port] = 4567
     @validator.run(settings, "api")
-    expect(@validator.reset).to eq(5)
+    expect(@validator.reset).to eq(6)
   end
 end

@@ -34,6 +34,11 @@ module Sensu
       # @return [Hash] settings.
       def default_settings
         default = {
+          :sensu => {
+            :spawn => {
+              :limit => 12
+            }
+          },
           :transport => {
             :name => "rabbitmq",
             :reconnect_on_error => true

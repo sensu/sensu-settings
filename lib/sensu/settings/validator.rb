@@ -22,8 +22,9 @@ module Sensu
       # @param service [String] sensu service to validate for.
       # @return [Array] validation failures.
       def run(settings, service=nil)
-        validate_categories(settings)
+        validate_sensu(settings[:sensu])
         validate_transport(settings[:transport])
+        validate_categories(settings)
         case service
         when "client"
           validate_client(settings[:client])
