@@ -102,7 +102,7 @@ describe "Sensu::Settings::Loader" do
     reasons = failures.map do |failure|
       failure[:message]
     end
-    expect(reasons).to include("check interval must be an integer")
+    expect(reasons).to include("check interval must be an integer greater than 0")
   end
 
   it "can attempt to load settings from a nonexistent file" do
