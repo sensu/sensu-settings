@@ -50,7 +50,7 @@ module Sensu
             invalid(check, "check publish must be boolean")
           unless check[:publish] == false
             (must_be_an_integer(check[:interval]) && check[:interval] > 0) ||
-              invalid(check, "check interval must be an integer")
+              invalid(check, "check interval must be an integer greater than 0")
           end
           must_be_boolean_if_set(check[:standalone]) ||
             invalid(check, "check standalone must be boolean")

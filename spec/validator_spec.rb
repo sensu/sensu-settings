@@ -104,7 +104,7 @@ describe "Sensu::Settings::Validator" do
     end
     expect(reasons).to include("check name cannot contain spaces or special characters")
     expect(reasons).to include("either check command or extension must be set")
-    expect(reasons).to include("check interval must be an integer")
+    expect(reasons).to include("check interval must be an integer greater than 0")
     expect(reasons).to include("check subscribers must be an array")
     expect(reasons.size).to eq(5)
   end
