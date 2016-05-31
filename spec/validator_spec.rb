@@ -188,6 +188,18 @@ describe "Sensu::Settings::Validator" do
     check[:ttl] = 1
     @validator.validate_check(check)
     expect(@validator.reset).to eq(0)
+    check[:aggregate] = 1
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
+    check[:aggregate] = true
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(0)
+    check[:aggregate] = "$test"
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
+    check[:aggregate] = "test"
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(0)
     check[:low_flap_threshold] = "25"
     @validator.validate_check(check)
     expect(@validator.reset).to eq(2)
