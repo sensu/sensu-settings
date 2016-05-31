@@ -92,6 +92,20 @@ module Sensu
           end
         end
 
+        # Validate check aggregate.
+        # Validates: aggregate
+        #
+        # @param check [Hash] sensu check definition.
+        def validate_check_aggregate(check)
+          if is_a_string?(check[:aggregate])
+            must_match_regex(/\A[\w\.-]+\z/, check[:aggregate]) ||
+              invalid(check, "check aggregate cannot contain spaces or special characters")
+          else
+            must_be_boolean(check[:aggregate]) ||
+              invalid(check, "check aggregate must be a string (name) or boolean")
+          end
+        end
+
         # Validate check flap detection.
         # Validates: low_flap_threshold, high_flap_threshold
         #
@@ -115,6 +129,7 @@ module Sensu
           validate_check_scheduling(check)
           validate_check_handling(check)
           validate_check_ttl(check) if check[:ttl]
+          validate_check_aggregate(check) if check[:aggregate]
           validate_check_flap_detection(check)
           validate_subdue(check) if check[:subdue]
         end
