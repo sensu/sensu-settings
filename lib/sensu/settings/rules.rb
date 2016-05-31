@@ -94,12 +94,20 @@ module Sensu
         (value =~ regex) == 0
       end
 
+      # Check if a value is boolean.
+      #
+      # @param value [Object] to check.
+      # @return [TrueClass, FalseClass]
+      def must_be_boolean(value)
+        !!value == value
+      end
+
       # Check if a value is boolean, if set (no nil).
       #
       # @param value [Object] to check.
       # @return [TrueClass, FalseClass]
       def must_be_boolean_if_set(value)
-        value.nil? ? true : (!!value == value)
+        value.nil? ? true : must_be_boolean(value)
       end
 
       # Check that value items are all strings and not empty.
