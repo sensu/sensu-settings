@@ -99,7 +99,9 @@ module Sensu
       # Load settings from a JSON file.
       #
       # @param [String] file path.
-      def load_file(file)
+      # @param must_exist [TrueClass, FalseClass] if the file must
+      #   exist and is readable.
+      def load_file(file, must_exist=true)
         if File.file?(file) && File.readable?(file)
           begin
             warning("loading config file", :file => file)
@@ -122,8 +124,11 @@ module Sensu
               :error => error.to_s
             })
           end
-        else
+        elsif must_exist
           load_error("config file does not exist or is not readable", :file => file)
+        else
+          warning("config file does not exist or is not readable", :file => file)
+          warning("ignoring config file", :file => file)
         end
       end
 

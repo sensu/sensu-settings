@@ -114,6 +114,14 @@ describe "Sensu::Settings::Loader" do
     expect(error[:message]).to include("config file does not exist or is not readable")
   end
 
+  it "can attempt to load settings from a nonexistent file and ignore it" do
+    @loader.load_file("/tmp/bananaphone", false)
+    expect(@loader.errors.length).to eq(0)
+    expect(@loader.warnings.length).to eq(2)
+    warning = @loader.warnings.last
+    expect(warning[:message]).to include("ignoring config file")
+  end
+
   it "can attempt to load settings from a file with invalid JSON" do
     expect {
       @loader.load_file(File.join(@assets_dir, "invalid.json"))
