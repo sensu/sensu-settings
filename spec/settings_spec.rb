@@ -51,9 +51,17 @@ describe "Sensu::Settings" do
   end
 
   it "can catch load errors" do
-    settings = Sensu::Settings.load(:config_file => "/tmp/bananaphone")
+    settings = Sensu::Settings.load(:config_file => File.join(@assets_dir, "invalid.json"))
     expect(settings.errors.length).to eq(1)
     error = settings.errors.first
-    expect(error[:message]).to include("config file does not exist or is not readable")
+    expect(error[:message]).to include("config file must be valid json")
+  end
+
+  it "can handle a nonexistent config.json" do
+    settings = Sensu::Settings.load(:config_file => "/tmp/bananaphone")
+    expect(settings.errors.length).to eq(0)
+    expect(settings.warnings.length).to eq(2)
+    warning = settings.warnings.last
+    expect(warning[:message]).to include("ignoring config file")
   end
 end

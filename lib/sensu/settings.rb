@@ -14,7 +14,7 @@ module Sensu
         @loader = Loader.new
         @loader.load_env
         if options[:config_file]
-          @loader.load_file(options[:config_file])
+          @loader.load_file(options[:config_file], false)
         end
         if options[:config_dir]
           @loader.load_directory(options[:config_dir])
