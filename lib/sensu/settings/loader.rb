@@ -139,8 +139,12 @@ module Sensu
       def load_directory(directory)
         warning("loading config files from directory", :directory => directory)
         path = directory.gsub(/\\(?=\S)/, "/")
-        Dir.glob(File.join(path, "**{,/*/**}/*.json")).uniq.each do |file|
-          load_file(file)
+        if File.readable?(path) && File.executable?(path)
+          Dir.glob(File.join(path, "**{,/*/**}/*.json")).uniq.each do |file|
+            load_file(file)
+          end
+        else
+          warning("insufficient permissions for loading", :directory => directory)
         end
       end
 
