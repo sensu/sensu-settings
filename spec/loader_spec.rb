@@ -154,9 +154,9 @@ describe "Sensu::Settings::Loader" do
 
   it "can attempt to load settings from files in a nonexistent directory" do
     @loader.load_directory("/tmp/rottentomatos")
-    expect(@loader.warnings.size).to eq(1)
-    warning = @loader.warnings.first
-    expect(warning[:message]).to eq("loading config files from directory")
+    expect(@loader.warnings.size).to eq(2)
+    expect(@loader.warnings.first[:message]).to eq("loading config files from directory")
+    expect(@loader.warnings.last[:message]).to eq("insufficient permissions for loading")
   end
 
   it "can set environment variables for child processes" do
