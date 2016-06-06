@@ -144,7 +144,7 @@ module Sensu
             load_file(file)
           end
         else
-          warning("insufficient permissions for loading", :directory => directory)
+          load_error("insufficient permissions for loading", :directory => directory)
         end
       end
 
