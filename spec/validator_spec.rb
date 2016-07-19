@@ -206,6 +206,9 @@ describe "Sensu::Settings::Validator" do
     check[:aggregates] = ["foo", "bar"]
     @validator.validate_check(check)
     expect(@validator.reset).to eq(0)
+    check[:aggregates] = [":::some_custom_attr:::-checks", ":::another_custom_attr|default_value:::-checks"]
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(0)
     check[:aggregate] = 1
     @validator.validate_check(check)
     expect(@validator.reset).to eq(1)
@@ -216,6 +219,9 @@ describe "Sensu::Settings::Validator" do
     @validator.validate_check(check)
     expect(@validator.reset).to eq(1)
     check[:aggregate] = "test"
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(0)
+    check[:aggregate] = ":::some_custom_attribute|magic:::"
     @validator.validate_check(check)
     expect(@validator.reset).to eq(0)
     check[:low_flap_threshold] = "25"
