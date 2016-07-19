@@ -279,11 +279,10 @@ module Sensu
       #
       # The client subscriptions defaults to an empty array.
       def load_client_env
-        client_vars = %w( SENSU_CLIENT_NAME SENSU_CLIENT_ADDRESS SENSU_CLIENT_SUBSCRIPTIONS )
         @settings[:client][:name] = ENV["SENSU_CLIENT_NAME"] if ENV["SENSU_CLIENT_NAME"]
         @settings[:client][:address] = ENV["SENSU_CLIENT_ADDRESS"] if ENV["SENSU_CLIENT_ADDRESS"]
         @settings[:client][:subscriptions] = ENV.fetch("SENSU_CLIENT_SUBSCRIPTIONS", "").split(",")
-        if ENV.keys.any? {|k| client_vars.include?(k)}
+        if ENV.keys.any? {|k| k =~ /^SENSU_CLIENT/}
           warning("using sensu client environment variables", :client => @settings[:client])
         end
         @indifferent_access = false
