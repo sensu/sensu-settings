@@ -113,10 +113,12 @@ module Sensu
       # Check that value items are all strings and not empty.
       #
       # @param value [Array] with items to check.
+      # @param regex [Regexp] to validate string items with.
       # @return [TrueClass, FalseClass]
-      def items_must_be_strings(value)
+      def items_must_be_strings(value, regex=nil)
         value.all? do |item|
-          item.is_a?(String) && !item.empty?
+          item.is_a?(String) && !item.empty? &&
+            (regex.nil? || item =~ regex)
         end
       end
 
