@@ -200,6 +200,9 @@ describe "Sensu::Settings::Validator" do
     check[:aggregates] = [true]
     @validator.validate_check(check)
     expect(@validator.reset).to eq(1)
+    check[:aggregates] = ["foo", "$bar$"]
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
     check[:aggregates] = ["foo", "bar"]
     @validator.validate_check(check)
     expect(@validator.reset).to eq(0)
