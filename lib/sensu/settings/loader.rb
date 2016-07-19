@@ -29,6 +29,23 @@ module Sensu
         self.class.create_category_methods
       end
 
+      # Auto-detected defaults for client definition
+      #
+      # Client name defaults to system hostname.
+      # Client address defaults to first detected non-loopback ipv4 address.
+      #
+      # Client subscriptions are intentionally omitted here as sensu-client
+      # will provide defaults using client name after final settings are
+      # loaded.
+      #
+      # @return [Hash] default client settings
+      def client_defaults
+        {
+          :name => system_hostname,
+          :address => system_address
+        }
+      end
+
       # Default settings.
       #
       # @return [Hash] settings.
@@ -46,6 +63,9 @@ module Sensu
         }
         CATEGORIES.each do |category|
           default[category] = {}
+        end
+        if ["client", "rspec"].include?(sensu_service_name)
+          default[:client] = client_defaults
         end
         default
       end
@@ -253,20 +273,17 @@ module Sensu
       end
 
       # Load Sensu client settings from the environment. This method
-      # loads client settings from several variables if
-      # `SENSU_CLIENT_NAME` is set: `SENSU_CLIENT_NAME`,
-      # `SENSU_CLIENT_ADDRESS`, and `SENSU_CLIENT_SUBSCRIPTIONS`. The
-      # Sensu client address defaults to the current system hostname
-      # and subscriptions defaults to an empty array.
+      # loads client settings from several variables:
+      # `SENSU_CLIENT_NAME`, `SENSU_CLIENT_ADDRESS`, and
+      # `SENSU_CLIENT_SUBSCRIPTIONS`.
+      #
+      # The client subscriptions defaults to an empty array.
       def load_client_env
-        if ENV["SENSU_CLIENT_NAME"]
-          @settings[:client] ||= {}
-          @settings[:client][:name] = ENV["SENSU_CLIENT_NAME"]
-          @settings[:client][:address] = ENV.fetch("SENSU_CLIENT_ADDRESS", system_hostname)
-          @settings[:client][:subscriptions] = ENV.fetch("SENSU_CLIENT_SUBSCRIPTIONS", "").split(",")
-          warning("using sensu client environment variables", :client => @settings[:client])
-          @indifferent_access = false
-        end
+        @settings[:client][:name] = ENV["SENSU_CLIENT_NAME"] if ENV["SENSU_CLIENT_NAME"]
+        @settings[:client][:address] = ENV["SENSU_CLIENT_ADDRESS"] if ENV["SENSU_CLIENT_ADDRESS"]
+        @settings[:client][:subscriptions] = ENV.fetch("SENSU_CLIENT_SUBSCRIPTIONS", "").split(",")
+        warning("using sensu client environment variables", :client => @settings[:client])
+        @indifferent_access = false
       end
 
       # Load Sensu API settings from the environment. This method sets
@@ -374,6 +391,17 @@ module Sensu
       # @return [String] system hostname.
       def system_hostname
         Socket.gethostname rescue "unknown"
+      end
+
+      # Retrieve the system IP address. If a valid non-loopback
+      # IPv4 address cannot be found and an error is thrown,
+      # "unknown" will be returned.
+      #
+      # @return [String] system ip address
+      def system_address
+        Socket.ip_address_list.find { |address|
+          address.ipv4? && !address.ipv4_loopback?
+        }.ip_address rescue "unknown"
       end
 
       # Record a warning.

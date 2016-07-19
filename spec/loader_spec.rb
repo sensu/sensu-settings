@@ -53,6 +53,15 @@ describe "Sensu::Settings::Loader" do
     ENV["REDIS_URL"] = nil
   end
 
+  it "can load Sensu client settings with auto-detected defaults" do
+    @loader.load_env
+    expect(@loader.warnings.size).to eq(1)
+    warning = @loader.warnings.shift
+    client = warning[:client]
+    expect(client[:name]).to be_kind_of(String)
+    expect(client[:address]).to be_kind_of(String)
+  end
+
   it "can load Sensu client settings with defaults from the environment" do
     ENV["SENSU_CLIENT_NAME"] = "i-424242"
     @loader.load_env
