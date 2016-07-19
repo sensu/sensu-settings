@@ -97,6 +97,15 @@ module Sensu
         #
         # @param check [Hash] sensu check definition.
         def validate_check_aggregate(check)
+          must_be_an_array_if_set(check[:aggregates]) ||
+            invalid(check, "check aggregates must be an array")
+          if is_an_array?(check[:aggregates])
+            items_must_be_strings(check[:aggregates]) ||
+              invalid(check, "check aggregates items must be strings")
+          end
+          if is_a_string?(check[:aggregates])
+            invalid(check, "check aggregates must be an array")
+          end
           if is_a_string?(check[:aggregate])
             must_match_regex(/\A[\w\.-]+\z/, check[:aggregate]) ||
               invalid(check, "check aggregate cannot contain spaces or special characters")
