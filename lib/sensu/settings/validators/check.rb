@@ -99,7 +99,7 @@ module Sensu
         def validate_check_aggregate(check)
           if check[:aggregates]
             if is_an_array?(check[:aggregates])
-              items_must_be_strings(check[:aggregates], /\A[\w\.-]+\z/) ||
+              items_must_be_strings(check[:aggregates], /\A[\w\.:|-]+\z/) ||
                 invalid(check, "check aggregates items must be strings without spaces or special characters")
             else
               invalid(check, "check aggregates must be an array")
@@ -107,7 +107,7 @@ module Sensu
           end
           if check[:aggregate]
             if is_a_string?(check[:aggregate])
-              must_match_regex(/\A[\w\.-]+\z/, check[:aggregate]) ||
+              must_match_regex(/\A[\w\.:|-]+\z/, check[:aggregate]) ||
                 invalid(check, "check aggregate cannot contain spaces or special characters")
             else
               must_be_boolean(check[:aggregate]) ||
