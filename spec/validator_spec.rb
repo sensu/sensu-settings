@@ -21,7 +21,8 @@ describe "Sensu::Settings::Validator" do
     expect(reasons).to include("filters must be a hash")
     expect(reasons).to include("mutators must be a hash")
     expect(reasons).to include("handlers must be a hash")
-    expect(reasons.size).to eq(6)
+    expect(reasons).to include("extensions must be a hash")
+    expect(reasons.size).to eq(7)
   end
 
   it "can validate a sensu definition" do
@@ -57,10 +58,10 @@ describe "Sensu::Settings::Validator" do
       }
     }
     @validator.run(settings)
-    expect(@validator.reset).to eq(6)
+    expect(@validator.reset).to eq(7)
     settings[:sensu][:spawn][:limit] = 20
     @validator.run(settings)
-    expect(@validator.reset).to eq(5)
+    expect(@validator.reset).to eq(6)
   end
 
   it "can validate a transport definition" do
@@ -91,10 +92,10 @@ describe "Sensu::Settings::Validator" do
       }
     }
     @validator.run(settings)
-    expect(@validator.reset).to eq(6)
+    expect(@validator.reset).to eq(7)
     settings[:transport][:name] = "rabbitmq"
     @validator.run(settings)
-    expect(@validator.reset).to eq(5)
+    expect(@validator.reset).to eq(6)
   end
 
   it "can validate an empty check definition" do
@@ -333,10 +334,10 @@ describe "Sensu::Settings::Validator" do
       }
     }
     @validator.run(settings)
-    expect(@validator.reset).to eq(6)
+    expect(@validator.reset).to eq(7)
     settings[:checks][:foo][:interval] = 1
     @validator.run(settings)
-    expect(@validator.reset).to eq(5)
+    expect(@validator.reset).to eq(6)
   end
 
   it "can validate a filter definition" do
@@ -746,10 +747,10 @@ describe "Sensu::Settings::Validator" do
       }
     }
     @validator.run(settings, "client")
-    expect(@validator.reset).to eq(7)
+    expect(@validator.reset).to eq(8)
     settings[:client][:subscriptions] = ["bar"]
     @validator.run(settings, "client")
-    expect(@validator.reset).to eq(6)
+    expect(@validator.reset).to eq(7)
   end
 
   it "can validate an api definition" do
@@ -795,9 +796,49 @@ describe "Sensu::Settings::Validator" do
       }
     }
     @validator.run(settings, "api")
-    expect(@validator.reset).to eq(7)
+    expect(@validator.reset).to eq(8)
     settings[:api][:port] = 4567
     @validator.run(settings, "api")
+    expect(@validator.reset).to eq(7)
+  end
+
+  it "can validate a extension definition" do
+    extension = {}
+    @validator.validate_extension(extension)
+    expect(@validator.reset).to eq(0)
+    extension[:gem] = 1
+    @validator.validate_extension(extension)
+    expect(@validator.reset).to eq(1)
+    extension[:gem] = true
+    @validator.validate_extension(extension)
+    expect(@validator.reset).to eq(1)
+    extension[:gem] = "test"
+    @validator.validate_extension(extension)
+    expect(@validator.reset).to eq(0)
+    extension[:version] = 1
+    @validator.validate_extension(extension)
+    expect(@validator.reset).to eq(1)
+    extension[:version] = false
+    @validator.validate_extension(extension)
+    expect(@validator.reset).to eq(1)
+    extension[:version] = "1.0.0"
+    @validator.validate_extension(extension)
+    expect(@validator.reset).to eq(0)
+  end
+
+  it "can run, validating extensions" do
+    settings = {
+      :extensions => {
+        :foo => {
+          :gem => "sensu-extensions-test",
+          :version => 1
+        }
+      }
+    }
+    @validator.run(settings)
+    expect(@validator.reset).to eq(7)
+    settings[:extensions][:foo][:version] = "1.0.0"
+    @validator.run(settings)
     expect(@validator.reset).to eq(6)
   end
 end
