@@ -226,9 +226,9 @@ describe "Sensu::Settings::Loader" do
   it "can load settings overrides" do
     @loader.load_file(@config_file)
     @loader.load_overrides!
-    expect(@loader.warnings.size).to eq(1)
-    debug = @loader.debug_msgs.shift
-    client = debug[:client]
+    expect(@loader.warnings.size).to eq(2)
+    warning = @loader.warnings[1]
+    client = warning[:client]
     expect(client[:subscriptions]).to include("client:i-424242")
   end
 end
