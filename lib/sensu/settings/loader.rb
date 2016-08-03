@@ -113,6 +113,7 @@ module Sensu
         load_rabbitmq_env
         load_redis_env
         load_client_env
+        load_client_overrides
         load_api_env
       end
 
@@ -276,19 +277,24 @@ module Sensu
       # loads client settings from several variables:
       # `SENSU_CLIENT_NAME`, `SENSU_CLIENT_ADDRESS`, and
       # `SENSU_CLIENT_SUBSCRIPTIONS`.
-      #
-      # The client subscriptions defaults to a single subscription based on the
-      # client name, e.g "client:i-424242".
       def load_client_env
         @settings[:client][:name] = ENV["SENSU_CLIENT_NAME"] if ENV["SENSU_CLIENT_NAME"]
         @settings[:client][:address] = ENV["SENSU_CLIENT_ADDRESS"] if ENV["SENSU_CLIENT_ADDRESS"]
         @settings[:client][:subscriptions] = ENV.fetch("SENSU_CLIENT_SUBSCRIPTIONS", "").split(",")
-        @settings[:client][:subscriptions] << "client:#{@settings[:client][:name]}"
-        @settings[:client][:subscriptions].uniq!
         if ENV.keys.any? {|k| k =~ /^SENSU_CLIENT/}
           warning("using sensu client environment variables", :client => @settings[:client])
         end
         @indifferent_access = false
+      end
+
+      # Load Sensu client settings overrides. This method adds any overrides to
+      # the client definition. Overrides include:
+      #
+      # * Ensuring client subscriptions include a single subscription based on the
+      # client name, e.g "client:i-424242".
+      def load_client_overrides
+        @settings[:client][:subscriptions] << "client:#{@settings[:client][:name]}"
+        @settings[:client][:subscriptions].uniq!
       end
 
       # Load Sensu API settings from the environment. This method sets
