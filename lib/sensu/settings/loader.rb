@@ -8,6 +8,10 @@ module Sensu
     class Loader
       class Error < RuntimeError; end
 
+      # @!attribute [r] debug messages
+      #   @return [Array] loader debug messages
+      attr_reader :debug_msgs
+
       # @!attribute [r] warnings
       #   @return [Array] loader warnings.
       attr_reader :warnings
@@ -21,6 +25,7 @@ module Sensu
       attr_reader :loaded_files
 
       def initialize
+        @debug_msgs = []
         @warnings = []
         @errors = []
         @settings = default_settings
@@ -422,6 +427,17 @@ module Sensu
       # @return [Array] current warnings.
       def warning(message, data={})
         @warnings << {
+          :message => message
+        }.merge(data)
+      end
+
+      # Record a debug message.
+      #
+      # @param message [String] warning message.
+      # @param data [Hash] warning context.
+      # @return [Array] current warnings.
+      def debug(message, data={})
+        @debug_msgs << {
           :message => message
         }.merge(data)
       end
