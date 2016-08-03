@@ -68,7 +68,7 @@ describe "Sensu::Settings::Loader" do
     client = warning[:client]
     expect(client[:name]).to eq("i-424242")
     expect(client[:address]).to be_kind_of(String)
-    expect(client[:subscriptions]).to eq(["client:i-424242"])
+    expect(client[:subscriptions]).to eq([])
     ENV["SENSU_CLIENT_NAME"] = nil
   end
 
@@ -82,21 +82,9 @@ describe "Sensu::Settings::Loader" do
     client = warning[:client]
     expect(client[:name]).to eq("i-424242")
     expect(client[:address]).to eq("127.0.0.1")
-    expect(client[:subscriptions]).to eq(["foo", "bar", "baz", "client:i-424242"])
+    expect(client[:subscriptions]).to eq(["foo", "bar", "baz"])
     ENV["SENSU_CLIENT_NAME"] = nil
     ENV["SENSU_CLIENT_ADDRESS"] = nil
-    ENV["SENSU_CLIENT_SUBSCRIPTIONS"] = nil
-  end
-
-  it "can load Sensu client subscriptions from the environment without duplication" do
-    ENV["SENSU_CLIENT_NAME"] = "i-424242"
-    ENV["SENSU_CLIENT_SUBSCRIPTIONS"] = "client:i-424242"
-    @loader.load_env
-    expect(@loader.warnings.size).to eq(1)
-    warning = @loader.warnings.shift
-    client = warning[:client]
-    expect(client[:subscriptions]).to eq(["client:i-424242"])
-    ENV["SENSU_CLIENT_NAME"] = nil
     ENV["SENSU_CLIENT_SUBSCRIPTIONS"] = nil
   end
 
@@ -233,5 +221,14 @@ describe "Sensu::Settings::Loader" do
       handler[:name] == "default"
     end
     expect(handler[:type]).to eq("set")
+  end
+
+  it "can load settings overrides" do
+    @loader.load_file(@config_file)
+    @loader.load_overrides!
+    expect(@loader.warnings.size).to eq(1)
+    debug = @loader.debug_msgs.shift
+    client = debug[:client]
+    expect(client[:subscriptions]).to include("client:i-424242")
   end
 end

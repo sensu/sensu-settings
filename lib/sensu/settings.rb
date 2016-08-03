@@ -27,6 +27,7 @@ module Sensu
         if @loader.validate.empty?
           @loader.set_env!
         end
+        @loader.load_overrides!
         @loader
       rescue Loader::Error
         @loader

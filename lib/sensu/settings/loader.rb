@@ -118,7 +118,6 @@ module Sensu
         load_rabbitmq_env
         load_redis_env
         load_client_env
-        load_client_overrides
         load_api_env
       end
 
@@ -172,6 +171,24 @@ module Sensu
         else
           load_error("insufficient permissions for loading", :directory => directory)
         end
+      end
+
+      # Load Sensu client settings overrides. This method adds any overrides to
+      # the client definition. Overrides include:
+      #
+      # * Ensuring client subscriptions include a single subscription based on the
+      # client name, e.g "client:i-424242".
+      def load_client_overrides
+        @settings[:client][:subscriptions] ||= []
+        @settings[:client][:subscriptions] << "client:#{@settings[:client][:name]}"
+        @settings[:client][:subscriptions].uniq!
+        debug("applied sensu client overrides", :client => @settings[:client])
+      end
+
+      # Load overrides, i.e. settings which should always be present.
+      # Examples include client settings overrides which ensure a per-client subscription.
+      def load_overrides!
+        load_client_overrides
       end
 
       # Set Sensu settings related environment variables. This method
@@ -290,16 +307,6 @@ module Sensu
           warning("using sensu client environment variables", :client => @settings[:client])
         end
         @indifferent_access = false
-      end
-
-      # Load Sensu client settings overrides. This method adds any overrides to
-      # the client definition. Overrides include:
-      #
-      # * Ensuring client subscriptions include a single subscription based on the
-      # client name, e.g "client:i-424242".
-      def load_client_overrides
-        @settings[:client][:subscriptions] << "client:#{@settings[:client][:name]}"
-        @settings[:client][:subscriptions].uniq!
       end
 
       # Load Sensu API settings from the environment. This method sets
