@@ -60,8 +60,8 @@ describe "Sensu::Settings" do
   it "can handle a nonexistent config.json" do
     settings = Sensu::Settings.load(:config_file => "/tmp/bananaphone")
     expect(settings.errors.length).to eq(0)
-    expect(settings.warnings.length).to eq(2)
-    warning = settings.warnings.last
+    expect(settings.warnings.length).to eq(3)
+    warning = settings.warnings[1]
     expect(warning[:message]).to include("ignoring config file")
   end
 end

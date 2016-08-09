@@ -168,6 +168,24 @@ module Sensu
         end
       end
 
+      # Load Sensu client settings overrides. This method adds any overrides to
+      # the client definition. Overrides include:
+      #
+      # * Ensuring client subscriptions include a single subscription based on the
+      # client name, e.g "client:i-424242".
+      def load_client_overrides
+        @settings[:client][:subscriptions] ||= []
+        @settings[:client][:subscriptions] << "client:#{@settings[:client][:name]}"
+        @settings[:client][:subscriptions].uniq!
+        warning("applied sensu client overrides", :client => @settings[:client])
+      end
+
+      # Load overrides, i.e. settings which should always be present.
+      # Examples include client settings overrides which ensure a per-client subscription.
+      def load_overrides!
+        load_client_overrides
+      end
+
       # Set Sensu settings related environment variables. This method
       # sets `SENSU_LOADED_TEMPFILE` to a new temporary file path,
       # a file containing the colon delimited list of loaded
@@ -276,8 +294,6 @@ module Sensu
       # loads client settings from several variables:
       # `SENSU_CLIENT_NAME`, `SENSU_CLIENT_ADDRESS`, and
       # `SENSU_CLIENT_SUBSCRIPTIONS`.
-      #
-      # The client subscriptions defaults to an empty array.
       def load_client_env
         @settings[:client][:name] = ENV["SENSU_CLIENT_NAME"] if ENV["SENSU_CLIENT_NAME"]
         @settings[:client][:address] = ENV["SENSU_CLIENT_ADDRESS"] if ENV["SENSU_CLIENT_ADDRESS"]
