@@ -278,12 +278,24 @@ module Sensu
         end
       end
 
-      # Load Sensu Redis settings from the environment. This method
-      # sets the Redis settings to `REDIS_URL` if set. The Sensu Redis
-      # library accepts a URL string for options, this applies to data
-      # storage and the transport.
+      # Load Sensu Redis settings from the environment.
+      #
+      # This method evaluates the REDIS_SENTINEL_URLS and REDIS_URL environment variables
+      # and configures the Redis settings accordingly.
+      #
+      # When REDIS_SENTINEL_URLS is provided as a list of one or more
+      # comma-separated URLs, e.g.
+      # "redis://10.0.0.1:26379,redis://10.0.0.2:26379" these URLs will take
+      # precedence over the value provided by REDIS_URL, if any.
+      #
+      # As the redis library accepts a URL string for options. This
+      # configuration applies to data storage and the redis transport, if used.
       def load_redis_env
-        if ENV["REDIS_URL"]
+        if ENV["REDIS_SENTINEL_URLS"]
+          @settings[:redis] = {:sentinels => ENV["REDIS_SENTINEL_URLS"]}
+          warning("using redis sentinel url environment variable", :sentinels => @settings[:redis][:sentinels])
+          @indifferent_access = false
+        elsif ENV["REDIS_URL"]
           @settings[:redis] = ENV["REDIS_URL"]
           warning("using redis url environment variable", :redis => @settings[:redis])
           @indifferent_access = false
