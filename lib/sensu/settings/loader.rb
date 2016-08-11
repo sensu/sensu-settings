@@ -283,7 +283,11 @@ module Sensu
       # library accepts a URL string for options, this applies to data
       # storage and the transport.
       def load_redis_env
-        if ENV["REDIS_URL"]
+        if ENV["REDIS_SENTINEL_URLS"]
+          @settings[:redis] = {:sentinels => ENV["REDIS_SENTINEL_URLS"]}
+          warning("using redis sentinel url environment variable", :sentinels => @settings[:redis][:sentinels])
+          @indifferent_access = false
+        elsif ENV["REDIS_URL"]
           @settings[:redis] = ENV["REDIS_URL"]
           warning("using redis url environment variable", :redis => @settings[:redis])
           @indifferent_access = false

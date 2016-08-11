@@ -60,6 +60,15 @@ describe "Sensu::Settings::Loader" do
     ENV["REDIS_URL"] = nil
   end
 
+  it "can load Redis Sentinel settings from the environment" do
+    ENV["REDIS_SENTINEL_URLS"] = "redis://10.0.0.1:26379,redis://:password@10.0.0.2:26379"
+    @loader.load_env
+    expect(@loader.warnings.size).to eq(1)
+    warning = @loader.warnings.shift
+    expect(warning[:sentinels]).to eq("redis://10.0.0.1:26379,redis://:password@10.0.0.2:26379")
+    ENV["REDIS_SENTINEL_URLS"] = nil
+  end
+
   it "can load Sensu client settings with defaults from the environment" do
     ENV["SENSU_CLIENT_NAME"] = "i-424242"
     @loader.load_env
