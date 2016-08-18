@@ -110,7 +110,7 @@ module Sensu
         end
 
         # Validate a Sensu handler definition.
-        # Validates: timeout, mutator, handle_flapping
+        # Validates: timeout, mutator, handle_flapping, handle_silenced
         #
         # @param handler [Hash] sensu handler definition.
         def validate_handler(handler)
@@ -123,9 +123,8 @@ module Sensu
             invalid(handler, "handler mutator must be a string")
           must_be_boolean_if_set(handler[:handle_flapping]) ||
             invalid(handler, "handler handle_flapping must be boolean")
-          if handler[:subdue]
-            validate_subdue(handler)
-          end
+          must_be_boolean_if_set(handler[:handle_silenced]) ||
+            invalid(handler, "handler handle_silenced must be boolean")
         end
       end
     end

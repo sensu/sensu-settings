@@ -270,56 +270,72 @@ describe "Sensu::Settings::Validator" do
     @validator.validate_check(check)
     expect(@validator.reset).to eq(1)
     check[:subdue] = {
-      :at => "unknown"
+      :days => []
     }
     @validator.validate_check(check)
     expect(@validator.reset).to eq(1)
-    check[:subdue][:at] = "publisher"
+    check[:subdue] = {
+      :days => {}
+    }
     @validator.validate_check(check)
     expect(@validator.reset).to eq(0)
-    check[:subdue][:at] = "handler"
+    check[:subdue] = {
+      :days => {
+        :nope => {}
+      }
+    }
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
+    check[:subdue] = {
+      :days => {
+        :nope => []
+      }
+    }
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
+    check[:subdue] = {
+      :days => {
+        :all => {}
+      }
+    }
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
+    check[:subdue] = {
+      :days => {
+        :all => []
+      }
+    }
     @validator.validate_check(check)
     expect(@validator.reset).to eq(0)
-    check[:subdue][:begin] = "14:30"
-    check[:subdue][:end] = 1
+    check[:subdue] = {
+      :days => {
+        :all => [true]
+      }
+    }
     @validator.validate_check(check)
     expect(@validator.reset).to eq(1)
-    check[:subdue][:begin] = 1
-    check[:subdue][:end] = "14:30"
+    check[:subdue] = {
+      :days => {
+        :all => [
+          {
+            :begin => "5:00 PM",
+            :end => "nope"
+          }
+        ]
+      }
+    }
     @validator.validate_check(check)
     expect(@validator.reset).to eq(1)
-    check[:subdue][:begin] = "14:30"
-    check[:subdue][:end] = "16:30"
-    @validator.validate_check(check)
-    expect(@validator.reset).to eq(0)
-    check[:subdue][:days] = 1
-    @validator.validate_check(check)
-    expect(@validator.reset).to eq(1)
-    check[:subdue][:days] = ["unknown"]
-    @validator.validate_check(check)
-    expect(@validator.reset).to eq(1)
-    check[:subdue][:days] = [true]
-    @validator.validate_check(check)
-    expect(@validator.reset).to eq(1)
-    check[:subdue][:days] = ["monday"]
-    @validator.validate_check(check)
-    expect(@validator.reset).to eq(0)
-    check[:subdue][:exceptions] = 1
-    @validator.validate_check(check)
-    expect(@validator.reset).to eq(1)
-    check[:subdue][:exceptions] = []
-    @validator.validate_check(check)
-    expect(@validator.reset).to eq(0)
-    check[:subdue][:exceptions] = [1]
-    @validator.validate_check(check)
-    expect(@validator.reset).to eq(1)
-    check[:subdue][:exceptions] = [{}]
-    @validator.validate_check(check)
-    expect(@validator.reset).to eq(0)
-    check[:subdue][:exceptions] = [{:begin => "15:00"}]
-    @validator.validate_check(check)
-    expect(@validator.reset).to eq(1)
-    check[:subdue][:exceptions] = [{:begin => "15:00", :end => "15:30"}]
+    check[:subdue] = {
+      :days => {
+        :all => [
+          {
+            :begin => "5:00 PM",
+            :end => "8:00 AM"
+          }
+        ]
+      }
+    }
     @validator.validate_check(check)
     expect(@validator.reset).to eq(0)
   end
@@ -354,6 +370,86 @@ describe "Sensu::Settings::Validator" do
     @validator.validate_filter(filter)
     expect(@validator.reset).to eq(1)
     filter[:negate] = true
+    @validator.validate_filter(filter)
+    expect(@validator.reset).to eq(0)
+  end
+
+  it "can validate filter when" do
+    filter = {
+      :attributes => {}
+    }
+    @validator.validate_filter(filter)
+    expect(@validator.reset).to eq(0)
+    filter[:when] = true
+    @validator.validate_filter(filter)
+    expect(@validator.reset).to eq(1)
+    filter[:when] = {
+      :days => []
+    }
+    @validator.validate_filter(filter)
+    expect(@validator.reset).to eq(1)
+    filter[:when] = {
+      :days => {}
+    }
+    @validator.validate_filter(filter)
+    expect(@validator.reset).to eq(0)
+    filter[:when] = {
+      :days => {
+        :nope => {}
+      }
+    }
+    @validator.validate_filter(filter)
+    expect(@validator.reset).to eq(1)
+    filter[:when] = {
+      :days => {
+        :nope => []
+      }
+    }
+    @validator.validate_filter(filter)
+    expect(@validator.reset).to eq(1)
+    filter[:when] = {
+      :days => {
+        :all => {}
+      }
+    }
+    @validator.validate_filter(filter)
+    expect(@validator.reset).to eq(1)
+    filter[:when] = {
+      :days => {
+        :all => []
+      }
+    }
+    @validator.validate_filter(filter)
+    expect(@validator.reset).to eq(0)
+    filter[:when] = {
+      :days => {
+        :all => [true]
+      }
+    }
+    @validator.validate_filter(filter)
+    expect(@validator.reset).to eq(1)
+    filter[:when] = {
+      :days => {
+        :all => [
+          {
+            :begin => "5:00 PM",
+            :end => "nope"
+          }
+        ]
+      }
+    }
+    @validator.validate_filter(filter)
+    expect(@validator.reset).to eq(1)
+    filter[:when] = {
+      :days => {
+        :all => [
+          {
+            :begin => "5:00 PM",
+            :end => "8:00 AM"
+          }
+        ]
+      }
+    }
     @validator.validate_filter(filter)
     expect(@validator.reset).to eq(0)
   end
@@ -522,26 +618,6 @@ describe "Sensu::Settings::Validator" do
     @validator.validate_handler(handler)
     expect(@validator.reset).to eq(1)
     handler[:handlers] = ["default"]
-    @validator.validate_handler(handler)
-    expect(@validator.reset).to eq(0)
-  end
-
-  it "can validate handler subdue" do
-    handler = {
-      :name => "foo",
-      :type => "pipe",
-      :command => "cat"
-    }
-    @validator.validate_handler(handler)
-    expect(@validator.reset).to eq(0)
-    handler[:subdue] = true
-    @validator.validate_handler(handler)
-    expect(@validator.reset).to eq(1)
-    handler[:subdue] = {
-      :at => "handler",
-      :begin => "14:30",
-      :end => "15:45"
-    }
     @validator.validate_handler(handler)
     expect(@validator.reset).to eq(0)
   end
