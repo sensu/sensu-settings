@@ -129,6 +129,14 @@ module Sensu
           end
         end
 
+        # Validate check subdue.
+        # Validates: subdue
+        #
+        # @param check [Hash] sensu check definition.
+        def validate_check_subdue(check)
+          validate_time_windows(check, :subdue)
+        end
+
         # Validate a Sensu check definition.
         #
         # @param check [Hash] sensu check definition.
@@ -141,7 +149,7 @@ module Sensu
           validate_check_ttl(check) if check[:ttl]
           validate_check_aggregate(check)
           validate_check_flap_detection(check)
-          validate_subdue(check) if check[:subdue]
+          validate_check_subdue(check) if check[:subdue]
         end
       end
     end

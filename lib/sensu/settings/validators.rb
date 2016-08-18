@@ -1,6 +1,6 @@
 require "sensu/settings/validators/sensu"
 require "sensu/settings/validators/transport"
-require "sensu/settings/validators/subdue"
+require "sensu/settings/validators/time_window"
 require "sensu/settings/validators/check"
 require "sensu/settings/validators/filter"
 require "sensu/settings/validators/mutator"
@@ -14,7 +14,7 @@ module Sensu
     module Validators
       include Sensu
       include Transport
-      include Subdue
+      include TimeWindow
       include Check
       include Filter
       include Mutator
