@@ -7,7 +7,7 @@ module Sensu
         #
         # @param filter [Hash] sensu filter definition.
         def validate_filter_when(filter)
-          validate_time_windows(filter, :when)
+          validate_time_windows(filter, "filter", :when)
         end
 
         # Validate a Sensu filter definition.

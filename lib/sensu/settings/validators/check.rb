@@ -134,7 +134,7 @@ module Sensu
         #
         # @param check [Hash] sensu check definition.
         def validate_check_subdue(check)
-          validate_time_windows(check, :subdue)
+          validate_time_windows(check, "check", :subdue)
         end
 
         # Validate a Sensu check definition.
