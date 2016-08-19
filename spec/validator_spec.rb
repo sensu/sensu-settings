@@ -306,7 +306,7 @@ describe "Sensu::Settings::Validator" do
       }
     }
     @validator.validate_check(check)
-    expect(@validator.reset).to eq(0)
+    expect(@validator.reset).to eq(1)
     check[:subdue] = {
       :days => {
         :all => [true]
@@ -431,7 +431,7 @@ describe "Sensu::Settings::Validator" do
       }
     }
     @validator.validate_filter(filter)
-    expect(@validator.reset).to eq(0)
+    expect(@validator.reset).to eq(1)
     filter[:when] = {
       :days => {
         :all => [true]

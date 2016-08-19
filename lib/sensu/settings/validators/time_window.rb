@@ -12,9 +12,9 @@ module Sensu
         def validate_time_window_condition(definition, scope, attribute, condition)
           if is_a_hash?(condition)
             must_be_time(condition[:begin], condition[:end]) ||
-              invalid(definition, "#{scope} #{attribute} begin and end times must be valid")
+              invalid(definition, "#{scope} #{attribute} day time window begin and end times must be valid")
           else
-            invalid(definition, "#{scope} #{attribute} must be a hash")
+            invalid(definition, "#{scope} #{attribute} day time window must be a hash")
           end
         end
 
@@ -30,11 +30,15 @@ module Sensu
           if must_be_either(valid_days, days.keys)
             days.each do |day, conditions|
               if is_an_array?(conditions)
-                conditions.each do |condition|
-                  validate_time_window_condition(definition, scope, attribute, condition)
+                if !conditions.empty?
+                  conditions.each do |condition|
+                    validate_time_window_condition(definition, scope, attribute, condition)
+                  end
+                else
+                  invalid(definition, "#{scope} #{attribute} days #{day} must include at least one time window")
                 end
               else
-                invalid(definition, "#{scope} #{attribute} #{day} time windows must be in an array")
+                invalid(definition, "#{scope} #{attribute} days #{day} must be in an array")
               end
             end
           else
