@@ -174,6 +174,7 @@ module Sensu
       # * Ensuring client subscriptions include a single subscription based on the
       # client name, e.g "client:i-424242".
       def load_client_overrides
+        @settings[:client] ||= {}
         @settings[:client][:subscriptions] ||= []
         @settings[:client][:subscriptions] << "client:#{@settings[:client][:name]}"
         @settings[:client][:subscriptions].uniq!
