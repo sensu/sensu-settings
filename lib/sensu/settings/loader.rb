@@ -184,7 +184,7 @@ module Sensu
       # Load overrides, i.e. settings which should always be present.
       # Examples include client settings overrides which ensure a per-client subscription.
       def load_overrides!
-        load_client_overrides
+        load_client_overrides if ["client", "rspec"].include?(sensu_service_name)
       end
 
       # Set Sensu settings related environment variables. This method
