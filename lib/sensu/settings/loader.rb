@@ -174,6 +174,7 @@ module Sensu
       # * Ensuring client subscriptions include a single subscription based on the
       # client name, e.g "client:i-424242".
       def load_client_overrides
+        @settings[:client] ||= {}
         @settings[:client][:subscriptions] ||= []
         @settings[:client][:subscriptions] << "client:#{@settings[:client][:name]}"
         @settings[:client][:subscriptions].uniq!
@@ -183,7 +184,7 @@ module Sensu
       # Load overrides, i.e. settings which should always be present.
       # Examples include client settings overrides which ensure a per-client subscription.
       def load_overrides!
-        load_client_overrides
+        load_client_overrides if ["client", "rspec"].include?(sensu_service_name)
       end
 
       # Set Sensu settings related environment variables. This method
