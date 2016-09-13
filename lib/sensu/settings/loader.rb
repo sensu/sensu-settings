@@ -310,7 +310,7 @@ module Sensu
       def load_client_env
         @settings[:client][:name] = ENV["SENSU_CLIENT_NAME"] if ENV["SENSU_CLIENT_NAME"]
         @settings[:client][:address] = ENV["SENSU_CLIENT_ADDRESS"] if ENV["SENSU_CLIENT_ADDRESS"]
-        @settings[:client][:subscriptions] = ENV.fetch("SENSU_CLIENT_SUBSCRIPTIONS", "").split(",")
+        @settings[:client][:subscriptions] = ENV["SENSU_CLIENT_SUBSCRIPTIONS"].split(",") if ENV["SENSU_CLIENT_SUBSCRIPTIONS"]
         if ENV.keys.any? {|k| k =~ /^SENSU_CLIENT/}
           warning("using sensu client environment variables", :client => @settings[:client])
         end
