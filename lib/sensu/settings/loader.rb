@@ -51,6 +51,7 @@ module Sensu
       # @return [Hash] settings.
       def default_settings
         default = {
+          :client => {},
           :sensu => {
             :spawn => {
               :limit => 12
@@ -174,7 +175,6 @@ module Sensu
       # * Ensuring client subscriptions include a single subscription based on the
       # client name, e.g "client:i-424242".
       def load_client_overrides
-        @settings[:client] ||= {}
         @settings[:client][:subscriptions] ||= []
         @settings[:client][:subscriptions] << "client:#{@settings[:client][:name]}"
         @settings[:client][:subscriptions].uniq!
@@ -310,7 +310,7 @@ module Sensu
       def load_client_env
         @settings[:client][:name] = ENV["SENSU_CLIENT_NAME"] if ENV["SENSU_CLIENT_NAME"]
         @settings[:client][:address] = ENV["SENSU_CLIENT_ADDRESS"] if ENV["SENSU_CLIENT_ADDRESS"]
-        @settings[:client][:subscriptions] = ENV.fetch("SENSU_CLIENT_SUBSCRIPTIONS", "").split(",")
+        @settings[:client][:subscriptions] = ENV["SENSU_CLIENT_SUBSCRIPTIONS"].split(",") if ENV["SENSU_CLIENT_SUBSCRIPTIONS"]
         if ENV.keys.any? {|k| k =~ /^SENSU_CLIENT/}
           warning("using sensu client environment variables", :client => @settings[:client])
         end

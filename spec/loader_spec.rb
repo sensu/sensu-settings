@@ -77,7 +77,7 @@ describe "Sensu::Settings::Loader" do
     client = warning[:client]
     expect(client[:name]).to eq("i-424242")
     expect(client[:address]).to be_kind_of(String)
-    expect(client[:subscriptions]).to eq([])
+    expect(client[:subscriptions]).to eq(nil)
     ENV["SENSU_CLIENT_NAME"] = nil
   end
 
