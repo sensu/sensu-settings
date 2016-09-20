@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name          = "sensu-settings"
-  spec.version       = "9.1.2"
+  spec.version       = "9.2.0"
   spec.authors       = ["Sean Porter"]
   spec.email         = ["portertech@gmail.com"]
   spec.summary       = "The Sensu settings library, loader and validator"
