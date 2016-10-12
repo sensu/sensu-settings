@@ -5,6 +5,11 @@ module Sensu
     class << self
       # Load Sensu settings.
       #
+      # Settings are loaded in following order, prior to validation:
+      # 1. Environment Variables
+      # 2. JSON files on disk
+      # 3. Automaticly detected overrides (e.g. hostname, IP address)
+      #
       # @param [Hash] options
       # @option options [String] :config_file to load.
       # @option options [String] :config_dir to load.
@@ -24,10 +29,10 @@ module Sensu
             @loader.load_directory(directory)
           end
         end
+        @loader.load_overrides!
         if @loader.validate.empty?
           @loader.set_env!
         end
-        @loader.load_overrides!
         @loader
       rescue Loader::Error
         @loader
