@@ -127,7 +127,7 @@ module Sensu
           begin
             warning("loading config file", :file => file)
             contents = read_config_file(file)
-            config = Sensu::JSON.load(contents)
+            config = contents.empty? ? {} : Sensu::JSON.load(contents)
             merged = deep_merge(@settings, config)
             unless @loaded_files.empty?
               changes = deep_diff(@settings, merged)
