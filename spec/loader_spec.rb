@@ -114,6 +114,13 @@ describe "Sensu::Settings::Loader" do
     expect(@loader["api"]["port"]).to eq(4567)
   end
 
+  it "can load an empty file" do
+    empty_file = File.join(@assets_dir, "empty.json")
+    @loader.load_file(empty_file)
+    warning = @loader.warnings.first
+    expect(warning[:file]).to eq(File.expand_path(empty_file))
+  end
+
   it "can load settings from a file and validate them" do
     @loader.load_file(@config_file)
     failures = @loader.validate
