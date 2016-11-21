@@ -80,7 +80,7 @@ module Sensu
         end
 
         # Validate check ttl.
-        # Validates: ttl
+        # Validates: ttl, ttl_status
         #
         # @param check [Hash] sensu check definition.
         def validate_check_ttl(check)
@@ -90,6 +90,8 @@ module Sensu
           else
             invalid(check, "check ttl must be an integer")
           end
+          must_be_an_integer_if_set(check[:ttl_status]) ||
+            invalid(check, "check ttl_status must be an integer")
         end
 
         # Validate check aggregate.
