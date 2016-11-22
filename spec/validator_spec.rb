@@ -844,6 +844,55 @@ describe "Sensu::Settings::Validator" do
     client[:registration][:handlers] = ["foo"]
     @validator.validate_client(client)
     expect(@validator.reset).to eq(0)
+    client[:registration][:status] = true
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(1)
+    client[:registration][:status] = "3"
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(1)
+    client[:registration][:status] = 3
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(0)
+  end
+
+  it "can validate client deregistration" do
+    client = {
+      :name => "foo",
+      :address => "127.0.0.1",
+      :subscriptions => ["bar"]
+    }
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(0)
+    client[:deregistration] = true
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(1)
+    client[:deregistration] = {}
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(0)
+    client[:deregistration][:handler] = 1
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(1)
+    client[:deregistration][:handler] = "foo"
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(0)
+    client[:deregistration][:handlers] = 1
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(1)
+    client[:deregistration][:handlers] = [1]
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(1)
+    client[:deregistration][:handlers] = ["foo"]
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(0)
+    client[:deregistration][:status] = true
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(1)
+    client[:deregistration][:status] = "3"
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(1)
+    client[:deregistration][:status] = 3
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(0)
   end
 
   it "can run, validating client" do
