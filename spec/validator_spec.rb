@@ -758,6 +758,18 @@ describe "Sensu::Settings::Validator" do
     client[:http_socket] = {}
     @validator.validate_client(client)
     expect(@validator.reset).to eq(0)
+    client[:http_socket][:enabled] = 1
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(1)
+    client[:http_socket][:enabled] = "true"
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(1)
+    client[:http_socket][:enabled] = false
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(0)
+    client[:http_socket][:enabled] = true
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(0)
     client[:http_socket][:bind] = true
     @validator.validate_client(client)
     expect(@validator.reset).to eq(1)
