@@ -48,6 +48,8 @@ module Sensu
           must_be_a_hash_if_set(http_socket) ||
             invalid(client, "client http_socket must be a hash")
           if is_a_hash?(http_socket)
+            must_be_boolean_if_set(http_socket[:enabled]) ||
+              invalid(client, "client http_socket enabled must be boolean")
             must_be_a_string_if_set(http_socket[:bind]) ||
               invalid(client, "client http_socket bind must be a string")
             must_be_an_integer_if_set(http_socket[:port]) ||
