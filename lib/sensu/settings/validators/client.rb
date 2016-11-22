@@ -138,6 +138,37 @@ module Sensu
             invalid(client, "client registration must be a hash")
           if is_a_hash?(client[:registration])
             validate_client_registration_handlers(client)
+            must_be_an_integer_if_set(client[:registration][:status]) ||
+              invalid(client, "client registration status must be an integer")
+          end
+        end
+
+        # Validate client deregistration handlers.
+        # Validates: deregistration (handler, handlers)
+        #
+        # @param client [Hash] sensu client definition.
+        def validate_client_deregistration_handlers(client)
+          must_be_a_string_if_set(client[:deregistration][:handler]) ||
+            invalid(client, "client deregistration handler must be a string")
+          must_be_an_array_if_set(client[:deregistration][:handlers]) ||
+            invalid(client, "client deregistration handlers must be an array")
+          if is_an_array?(client[:deregistration][:handlers])
+            items_must_be_strings(client[:deregistration][:handlers]) ||
+              invalid(client, "client deregistration handlers must each be a string")
+          end
+        end
+
+        # Validate client deregistration.
+        # Validates: deregistration
+        #
+        # @param client [Hash] sensu client definition.
+        def validate_client_deregistration(client)
+          must_be_a_hash_if_set(client[:deregistration]) ||
+            invalid(client, "client deregistration must be a hash")
+          if is_a_hash?(client[:deregistration])
+            validate_client_deregistration_handlers(client)
+            must_be_an_integer_if_set(client[:deregistration][:status]) ||
+              invalid(client, "client deregistration status must be an integer")
           end
         end
 
@@ -163,6 +194,7 @@ module Sensu
             validate_client_redact(client)
             validate_client_signature(client)
             validate_client_registration(client)
+            validate_client_deregistration(client)
           end
         end
       end
