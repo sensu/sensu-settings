@@ -39,6 +39,28 @@ module Sensu
           end
         end
 
+        # Validate client http_socket.
+        # Validates: http_socket (bind, port, user, password)
+        #
+        # @param client [Hash] sensu client definition.
+        def validate_client_http_socket(client)
+          http_socket = client[:http_socket]
+          must_be_a_hash_if_set(http_socket) ||
+            invalid(client, "client http_socket must be a hash")
+          if is_a_hash?(http_socket)
+            must_be_a_string_if_set(http_socket[:bind]) ||
+              invalid(client, "client http_socket bind must be a string")
+            must_be_an_integer_if_set(http_socket[:port]) ||
+              invalid(client, "client http_socket port must be an integer")
+            if either_are_set?(http_socket[:user], http_socket[:password])
+              must_be_a_string(http_socket[:user]) ||
+                invalid(client, "client http_socket user must be a string")
+              must_be_a_string(http_socket[:password]) ||
+                invalid(client, "client http_socket password must be a string")
+            end
+          end
+        end
+
         # Validate client keepalives.
         # Validates: keepalives
         #
@@ -189,6 +211,7 @@ module Sensu
             validate_client_safe_mode(client)
             validate_client_subscriptions(client)
             validate_client_socket(client)
+            validate_client_http_socket(client)
             validate_client_keepalives(client)
             validate_client_keepalive(client)
             validate_client_redact(client)
