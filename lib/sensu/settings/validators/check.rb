@@ -64,6 +64,19 @@ module Sensu
           end
         end
 
+        # Validate check proxy requests.
+        # Validates: proxy_requests
+        #
+        # @param check [Hash] sensu check definition.
+        def validate_check_proxy_requests(check)
+          if is_a_hash?(check[:proxy_requests])
+            must_be_a_hash(check[:proxy_requests][:client_attributes]) ||
+              invalid(check, "check proxy_requests client_attributes must be a hash")
+          else
+            invalid(check, "check proxy_requests must be a hash")
+          end
+        end
+
         # Validate check handling.
         # Validates: handler, handlers
         #
@@ -147,6 +160,7 @@ module Sensu
           validate_check_execution(check)
           validate_check_source(check) if check[:source]
           validate_check_scheduling(check)
+          validate_check_proxy_requests(check) if check[:proxy_requests]
           validate_check_handling(check)
           validate_check_ttl(check) if check[:ttl]
           validate_check_aggregate(check)

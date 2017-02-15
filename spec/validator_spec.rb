@@ -159,6 +159,18 @@ describe "Sensu::Settings::Validator" do
     check[:subscribers] = []
     @validator.validate_check(check)
     expect(@validator.reset).to eq(0)
+    check[:proxy_requests] = true
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
+    check[:proxy_requests] = {}
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
+    check[:proxy_requests] = {:client_attributes => true}
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
+    check[:proxy_requests] = {:client_attributes => {}}
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(0)
     check[:standalone] = "true"
     @validator.validate_check(check)
     expect(@validator.reset).to eq(1)
