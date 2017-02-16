@@ -176,9 +176,16 @@ module Sensu
       # client name, e.g "client:i-424242".
       def load_client_overrides
         @settings[:client][:subscriptions] ||= []
-        @settings[:client][:subscriptions] << "client:#{@settings[:client][:name]}"
-        @settings[:client][:subscriptions].uniq!
-        warning("applied sensu client overrides", :client => @settings[:client])
+        if @settings[:client][:subscriptions].is_a?(Array)
+          @settings[:client][:subscriptions] << "client:#{@settings[:client][:name]}"
+          @settings[:client][:subscriptions].uniq!
+          warning("applied sensu client overrides", :client => @settings[:client])
+        else
+          warning("unable to apply sensu client overrides", {
+            :reason => "client subscriptions is not an array",
+            :client => @settings[:client]
+          })
+        end
       end
 
       # Load overrides, i.e. settings which should always be present.
