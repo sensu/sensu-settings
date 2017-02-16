@@ -103,6 +103,7 @@ describe "Sensu::Settings::Validator" do
     reasons = @validator.failures.map do |failure|
       failure[:message]
     end
+    expect(reasons).to include("check name must be a string")
     expect(reasons).to include("check name cannot contain spaces or special characters")
     expect(reasons).to include("either check command or extension must be set")
     expect(reasons).to include("check interval must be an integer greater than 0")
