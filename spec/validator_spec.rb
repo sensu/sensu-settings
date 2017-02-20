@@ -151,6 +151,15 @@ describe "Sensu::Settings::Validator" do
     check[:interval] = 1
     @validator.validate_check(check)
     expect(@validator.reset).to eq(1)
+    check[:cron] = true
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(3)
+    check[:cron] = "* * * *"
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(2)
+    check[:cron] = "* * * * *"
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
     check[:subscribers] = 1
     @validator.validate_check(check)
     expect(@validator.reset).to eq(1)

@@ -1,3 +1,5 @@
+require "parse-cron"
+
 module Sensu
   module Settings
     module Validators
@@ -41,16 +43,35 @@ module Sensu
           end
         end
 
+        # Validate check cron.
+        # Validates: cron
+        #
+        # @param check [Hash] sensu check definition.
+        def validate_check_cron(check)
+          must_be_a_string(check[:cron]) ||
+            invalid(check, "check cron must be a string")
+          begin
+            cron_parser = CronParser.new(check[:cron])
+            cron_parser.next(Time.now)
+          rescue ArgumentError
+            invalid(check, "check cron string must use the cron syntax")
+          end
+        end
+
         # Validate check scheduling.
-        # Validates: interval, standalone, subscribers
+        # Validates: publish, interval, standalone, subscribers
         #
         # @param check [Hash] sensu check definition.
         def validate_check_scheduling(check)
           must_be_boolean_if_set(check[:publish]) ||
             invalid(check, "check publish must be boolean")
           unless check[:publish] == false
-            (must_be_an_integer(check[:interval]) && check[:interval] > 0) ||
-              invalid(check, "check interval must be an integer greater than 0")
+            if check[:cron]
+              validate_check_cron(check)
+            else
+              (must_be_an_integer(check[:interval]) && check[:interval] > 0) ||
+                invalid(check, "check interval must be an integer greater than 0")
+            end
           end
           must_be_boolean_if_set(check[:standalone]) ||
             invalid(check, "check standalone must be boolean")
