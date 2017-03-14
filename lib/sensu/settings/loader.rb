@@ -353,7 +353,7 @@ module Sensu
         else
           contents.sub!(/^\357\273\277/, "")
         end
-        contents
+        contents.strip
       end
 
       # Deep merge two hashes.
