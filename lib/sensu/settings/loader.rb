@@ -111,7 +111,7 @@ module Sensu
       # likely cause a sum mismatch between two Sensu service systems.
       #
       # @return [String] SHA256 hex digest.
-      def hashsum
+      def hexdigest
         hash = case sensu_service_name
         when "client", "rspec"
           to_hash
