@@ -2,6 +2,7 @@ require "sensu/settings/validator"
 require "sensu/json"
 require "tmpdir"
 require "socket"
+require "digest"
 
 module Sensu
   module Settings
@@ -102,6 +103,24 @@ module Sensu
       # @return [Object] value for key.
       def [](key)
         to_hash[key]
+      end
+
+      # Create a SHA256 hex digest for the settings Hash object. The
+      # client definition scope is ignored when the current process is
+      # not a Sensu client, as it is essentially ignored and it will
+      # likely cause a sum mismatch between two Sensu service systems.
+      #
+      # @return [String] SHA256 hex digest.
+      def hashsum
+        hash = case sensu_service_name
+        when "client", "rspec"
+          to_hash
+        else
+          to_hash.reject do |key, value|
+            key.to_s == "client"
+          end
+        end
+        Digest::SHA256.hexdigest(hash.to_s)
       end
 
       # Load settings from the environment.
