@@ -12,7 +12,7 @@ describe "Sensu::Settings::Loader" do
   end
 
   it "can provide a loader API" do
-    expect(@loader).to respond_to(:load_env, :load_file, :load_directory, :set_env!, :validate, :hashsum)
+    expect(@loader).to respond_to(:load_env, :load_file, :load_directory, :set_env!, :validate, :hexdigest)
   end
 
   it "can provide indifferent access to settings" do
@@ -255,14 +255,14 @@ describe "Sensu::Settings::Loader" do
     expect(client[:subscriptions]).to include("client:i-424242")
   end
 
-  it "can provide a settings hashsum" do
+  it "can provide a settings hexdigest" do
     loader1 = Sensu::Settings::Loader.new
     loader2 = Sensu::Settings::Loader.new
     loader1.load_file(@config_file)
     loader2.load_file(@config_file)
-    expect(loader1.hashsum).to be_kind_of(String)
-    expect(loader1.hashsum).to eq(loader2.hashsum)
+    expect(loader1.hexdigest).to be_kind_of(String)
+    expect(loader1.hexdigest).to eq(loader2.hexdigest)
     loader1.load_overrides!
-    expect(loader1.hashsum).to_not eq(loader2.hashsum)
+    expect(loader1.hexdigest).to_not eq(loader2.hexdigest)
   end
 end
