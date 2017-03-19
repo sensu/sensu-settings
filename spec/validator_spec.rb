@@ -1017,6 +1017,33 @@ describe "Sensu::Settings::Validator" do
     api[:password] = "bar"
     @validator.validate_api(api)
     expect(@validator.reset).to eq(0)
+    api[:endpoints] = true
+    @validator.validate_api(api)
+    expect(@validator.reset).to eq(1)
+    api[:endpoints] = []
+    @validator.validate_api(api)
+    expect(@validator.reset).to eq(0)
+    api[:endpoints] = [true]
+    @validator.validate_api(api)
+    expect(@validator.reset).to eq(1)
+    api[:endpoints] = [{}]
+    @validator.validate_api(api)
+    expect(@validator.reset).to eq(2)
+    api[:endpoints] = [{:host => true, :port => true}]
+    @validator.validate_api(api)
+    expect(@validator.reset).to eq(2)
+    api[:endpoints] = [{:host => "localhost", :port => 4567}]
+    @validator.validate_api(api)
+    expect(@validator.reset).to eq(0)
+    api[:endpoints] = [{:host => "localhost", :port => 4567, :ssl => 0}]
+    @validator.validate_api(api)
+    expect(@validator.reset).to eq(1)
+    api[:endpoints] = [{:host => "localhost", :port => 4567, :ssl => false}]
+    @validator.validate_api(api)
+    expect(@validator.reset).to eq(0)
+    api[:endpoints] = [{:url => "http://localhost:4567"}]
+    @validator.validate_api(api)
+    expect(@validator.reset).to eq(0)
   end
 
   it "can run, validating api" do

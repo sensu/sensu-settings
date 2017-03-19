@@ -15,6 +15,34 @@ module Sensu
           end
         end
 
+        # Validate API endpoints.
+        # Validates: endpoints
+        #
+        # @param api [Hash] sensu api definition.
+        def validate_api_endpoints(api)
+          if is_an_array?(api[:endpoints])
+            api[:endpoints].each do |endpoint|
+              if is_a_hash?(endpoint)
+                if endpoint[:url]
+                  must_be_a_string(endpoint[:url]) ||
+                    invalid(api, "api endpoint url must be a string")
+                else
+                  must_be_a_string(endpoint[:host]) ||
+                    invalid(api, "api endpoint host must be a string")
+                  must_be_an_integer(endpoint[:port]) ||
+                    invalid(api, "api endpoint port must be an integer")
+                  must_be_boolean_if_set(endpoint[:ssl]) ||
+                    invalid(api, "api endpoint ssl must be a boolean")
+                end
+              else
+                invalid(api, "api endpoints must each be a hash")
+              end
+            end
+          else
+            invalid(api, "api endpoints must be an array")
+          end
+        end
+
         # Validate a Sensu API definition.
         # Validates: port, bind
         #
@@ -28,6 +56,7 @@ module Sensu
             must_be_a_string_if_set(api[:bind]) ||
               invalid(api, "api bind must be a string")
             validate_api_authentication(api)
+            validate_api_endpoints(api) if api[:endpoints]
           end
         end
       end
