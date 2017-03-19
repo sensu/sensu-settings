@@ -92,6 +92,7 @@ module Sensu
       def to_hash
         unless @indifferent_access
           indifferent_access!
+          @hexdigest = nil
         end
         @settings
       end
@@ -109,18 +110,25 @@ module Sensu
       # client definition scope is ignored when the current process is
       # not a Sensu client, as it is essentially ignored and it will
       # likely cause a sum mismatch between two Sensu service systems.
+      # This method will not recalculate the hex digest, unless the
+      # settings have been altered, determine by the values of
+      # `@hexdigest` and `@indifferent_access`.
       #
       # @return [String] SHA256 hex digest.
       def hexdigest
-        hash = case sensu_service_name
-        when "client", "rspec"
-          to_hash
+        if @hexdigest && @indifferent_access
+          @hexdigest
         else
-          to_hash.reject do |key, value|
-            key.to_s == "client"
+          hash = case sensu_service_name
+          when "client", "rspec"
+            to_hash
+          else
+            to_hash.reject do |key, value|
+              key.to_s == "client"
+            end
           end
+          @hexdigest = Digest::SHA256.hexdigest(hash.to_s)
         end
-        Digest::SHA256.hexdigest(hash.to_s)
       end
 
       # Load settings from the environment.
@@ -199,6 +207,7 @@ module Sensu
           @settings[:client][:subscriptions] << "client:#{@settings[:client][:name]}"
           @settings[:client][:subscriptions].uniq!
           warning("applied sensu client overrides", :client => @settings[:client])
+          @indifferent_access = false
         else
           warning("unable to apply sensu client overrides", {
             :reason => "client subscriptions is not an array",
