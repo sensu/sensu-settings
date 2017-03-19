@@ -18,10 +18,18 @@ describe "Sensu::Settings" do
     expect(settings).to respond_to(:validate)
   end
 
-  it "can retrive the current loaded loader" do
-    settings = Sensu::Settings.load
-    expect(Sensu::Settings.get).to eq(settings)
-    expect(Sensu::Settings.get).to eq(settings)
+  it "can provide a loader singleton" do
+    singleton = Sensu::Settings.get
+    expect(Sensu::Settings.get).to eq(singleton)
+  end
+
+  it "can override the loader singleton" do
+    singleton = Sensu::Settings.get
+    expect(Sensu::Settings.get).to eq(singleton)
+    loader = Sensu::Settings.load
+    expect(singleton).to_not eq(loader)
+    Sensu::Settings.loader = loader
+    expect(Sensu::Settings.get).to eq(loader)
   end
 
   it "can load up a loader if one doesn't exist" do
