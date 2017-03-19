@@ -11,6 +11,3 @@ rvm:
 notifications:
   irc:
     - "irc.freenode.net#sensu"
-addons:
-  code_climate:
-    repo_token: 824f4a75343a9300704f23e93eaaecb25d998e408f2c9b96cd44f55983d95483
