@@ -47,10 +47,8 @@ describe "Sensu::Settings::Rules" do
     expect(must_be_time("16:30", "21:00")).to be(true)
     expect(must_be_time(false)).to be(false)
     expect(must_be_time(false, "21:00")).to be(false)
-    unless RUBY_VERSION < "1.9"
-      expect(must_be_time("false")).to be(false)
-      expect(must_be_time("false", "21:00")).to be(false)
-    end
+    expect(must_be_time("false")).to be(false)
+    expect(must_be_time("false", "21:00")).to be(false)
     expect(must_be_time(1)).to be(false)
     expect(must_be_either(%w[foo bar], "foo")).to be(true)
     expect(must_be_either(%w[foo bar], "bar")).to be(true)
