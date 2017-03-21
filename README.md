@@ -1,6 +1,8 @@
 # Sensu::Settings
 
 [![Build Status](https://travis-ci.org/sensu/sensu-settings.svg?branch=master)](https://travis-ci.org/sensu/sensu-settings)
+![Gem Version](https://img.shields.io/gem/v/sensu-settings.svg)
+![MIT Licensed](https://img.shields.io/github/license/sensu/sensu.svg)
 
 ## Installation
 
