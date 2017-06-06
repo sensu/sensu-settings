@@ -113,6 +113,12 @@ module Sensu
           if is_a_hash?(client[:keepalive])
             validate_client_keepalive_handlers(client)
             validate_client_keepalive_thresholds(client)
+            # A client keepalive may include several check attributes.
+            # Validation is necessary, although the validation failure
+            # messages may be a bit confusing.
+            validate_check_source(client[:keepalive]) if client[:keepalive][:source]
+            validate_check_aggregate(client[:keepalive])
+            validate_check_flap_detection(client[:keepalive])
           end
         end
 
