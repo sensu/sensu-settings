@@ -887,6 +887,14 @@ describe "Sensu::Settings::Validator" do
     client[:keepalive][:thresholds][:critical] = 90
     @validator.validate_client(client)
     expect(@validator.reset).to eq(0)
+    client[:keepalive][:low_flap_threshold] = "absent"
+    client[:keepalive][:high_flap_threshold] = "absent"
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(2)
+    client[:keepalive][:low_flap_threshold] = 20
+    client[:keepalive][:high_flap_threshold] = 60
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(0)
   end
 
   it "can validate client registration" do
