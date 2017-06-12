@@ -36,7 +36,7 @@ module Sensu
         # @param check [Hash] sensu check definition.
         def validate_check_source(check)
           if is_a_string?(check[:source])
-            must_match_regex(/^[\w\.-]+$/, check[:source]) ||
+            must_match_regex(/\A[\w\.-]+\z/, check[:source]) ||
               invalid(check, "check source cannot contain spaces or special characters")
           else
             invalid(check, "check source must be a string")
