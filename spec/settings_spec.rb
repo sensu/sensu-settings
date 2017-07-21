@@ -72,4 +72,13 @@ describe "Sensu::Settings" do
     warning = settings.warnings[1]
     expect(warning[:message]).to include("ignoring config file")
   end
+
+  it "can handle validation errors" do
+    ENV["SENSU_CLIENT_NAME"] = "$$ INVALID $$"
+    settings = Sensu::Settings.load
+    expect(settings.errors.length).to eq(1)
+    error = settings.errors.first
+    expect(error[:message]).to include("client name cannot contain spaces or special characters")
+    ENV["SENSU_CLIENT_NAME"] = nil
+  end
 end

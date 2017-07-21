@@ -30,6 +30,9 @@ module Sensu
           validate_client(settings[:client])
         when "api"
           validate_api(settings[:api])
+        when "rspec"
+          validate_client(settings[:client])
+          validate_api(settings[:api])
         end
         @failures
       end

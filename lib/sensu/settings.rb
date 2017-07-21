@@ -32,6 +32,7 @@ module Sensu
           end
         end
         loader.load_overrides!
+        loader.validate
         loader
       rescue Loader::Error
         loader

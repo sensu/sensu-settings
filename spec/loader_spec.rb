@@ -22,7 +22,7 @@ describe "Sensu::Settings::Loader" do
 
   it "can validate loaded settings" do
     failures = @loader.validate
-    expect(failures.size).to eq(0)
+    expect(failures.size).to eq(1)
   end
 
   it "can load Sensu client settings with auto-detected defaults" do
