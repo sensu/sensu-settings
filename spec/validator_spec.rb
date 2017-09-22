@@ -291,6 +291,58 @@ describe "Sensu::Settings::Validator" do
     expect(@validator.reset).to eq(1)
   end
 
+  it "can validate check hooks" do
+    check = {
+      :name => "foo",
+      :command => "true",
+      :interval => 1,
+      :standalone => true
+    }
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(0)
+    check[:hooks] = true
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
+    check[:hooks] = {}
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(0)
+    check[:hooks] = {:fail => {}}
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(2)
+    check[:hooks] = {:critical => {}}
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
+    check[:hooks] = {:critical => {:command => "true"}}
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(0)
+    check[:hooks] = {:critical => {:command => "true", :timeout => true}}
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
+    check[:hooks] = {:critical => {:command => "true", :timeout => 5}}
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(0)
+    check[:hooks] = {
+      :ok => {:command => "true"},
+      :warning => {:command => "true"},
+      :critical => {:command => "true"},
+      :unknown => {:command => "true"}
+    }
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(0)
+    check[:hooks] = {"256" => {:command => "true"}}
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
+    check[:hooks] = {"2" => {:command => "true"}}
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(0)
+    check[:hooks] = {"zero" => {:command => "true"}}
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
+    check[:hooks] = {"non-zero" => {:command => "true"}}
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(0)
+  end
+
   it "can validate check subdue" do
     check = {
       :name => "foo",
