@@ -165,6 +165,36 @@ module Sensu
           end
         end
 
+        # Validate check hook execution.
+        # Validates: command, timeout
+        #
+        # @param check [Hash] sensu check definition.
+        # @param hook [Hash] sensu check hook definition.
+        def validate_check_hook_execution(check, hook)
+          must_be_a_string(hook[:command]) ||
+            invalid(check, "check hook command must be a string")
+          must_be_a_numeric_if_set(hook[:timeout]) ||
+            invalid(check, "check hook timeout must be numeric")
+        end
+
+        # Validate check hooks.
+        # Validates: hooks
+        #
+        # @param check [Hash] sensu check definition.
+        def validate_check_hooks(check)
+          if check[:hooks].is_a?(Hash)
+            check[:hooks].each do |key, hook|
+              must_be_either(%w[ok warning critical unknown], key.to_s) ||
+                (0..255).map {|i| i.to_s}.include?(key.to_s) ||
+                key.to_s == "non-zero" ||
+                invalid(check, "check hook key must be a severity, status, or 'non-zero'")
+              validate_check_hook_execution(check, hook)
+            end
+          else
+            invalid(check, "check hooks must be a hash")
+          end
+        end
+
         # Validate check subdue.
         # Validates: subdue
         #
@@ -186,6 +216,7 @@ module Sensu
           validate_check_ttl(check) if check[:ttl]
           validate_check_aggregate(check)
           validate_check_flap_detection(check)
+          validate_check_hooks(check) if check[:hooks]
           validate_check_subdue(check) if check[:subdue]
         end
       end
