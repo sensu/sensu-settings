@@ -352,7 +352,7 @@ describe "Sensu::Settings::Validator" do
     expect(@validator.reset).to eq(0)
   end
 
-  it "can validate check output truncate" do
+  it "can validate check truncate output" do
     check = {
       :name => "foo",
       :command => "true",
