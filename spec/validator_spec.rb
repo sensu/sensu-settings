@@ -321,6 +321,15 @@ describe "Sensu::Settings::Validator" do
     check[:hooks] = {:critical => {:command => "true", :timeout => 5}}
     @validator.validate_check(check)
     expect(@validator.reset).to eq(0)
+    check[:hooks] = {:critical => {:command => "true", :timeout => 5, :stdin => 1}}
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
+    check[:hooks] = {:critical => {:command => "true", :timeout => 5, :stdin => true}}
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(0)
+    check[:hooks] = {:critical => {:command => "true", :timeout => 5, :stdin => false}}
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(0)
     check[:hooks] = {
       :ok => {:command => "true"},
       :warning => {:command => "true"},

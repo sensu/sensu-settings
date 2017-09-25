@@ -175,6 +175,8 @@ module Sensu
             invalid(check, "check hook command must be a string")
           must_be_a_numeric_if_set(hook[:timeout]) ||
             invalid(check, "check hook timeout must be numeric")
+          must_be_boolean_if_set(hook[:stdin]) ||
+            invalid(check, "check hook stdin must be boolean")
         end
 
         # Validate check hooks.
