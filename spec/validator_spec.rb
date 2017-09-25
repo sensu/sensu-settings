@@ -352,6 +352,41 @@ describe "Sensu::Settings::Validator" do
     expect(@validator.reset).to eq(0)
   end
 
+  it "can validate check output truncate" do
+    check = {
+      :name => "foo",
+      :command => "true",
+      :interval => 1,
+      :standalone => true
+    }
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(0)
+    check[:truncate_output] = 1
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
+    check[:truncate_output] = false
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(0)
+    check[:truncate_output] = true
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(0)
+    check[:truncate_output_length] = "255"
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
+    check[:truncate_output_length] = 255
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(0)
+    check[:truncate_output_length] = 0
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
+    check[:truncate_output_length] = -1
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
+    check[:truncate_output_length] = 1
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(0)
+  end
+
   it "can validate check subdue" do
     check = {
       :name => "foo",
