@@ -197,11 +197,11 @@ module Sensu
           end
         end
 
-        # Validate check output truncate.
+        # Validate check truncate output.
         # Validates: truncate_output, truncate_output_length
         #
         # @param check [Hash] sensu check definition.
-        def validate_check_output_truncate(check)
+        def validate_check_truncate_output(check)
           must_be_boolean_if_set(check[:truncate_output]) ||
             invalid(check, "check truncate_output must be boolean")
           if check[:truncate_output_length]
@@ -233,7 +233,7 @@ module Sensu
           validate_check_aggregate(check)
           validate_check_flap_detection(check)
           validate_check_hooks(check) if check[:hooks]
-          validate_check_output_truncate(check)
+          validate_check_truncate_output(check)
           validate_check_subdue(check) if check[:subdue]
         end
       end
