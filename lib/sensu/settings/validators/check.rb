@@ -28,6 +28,8 @@ module Sensu
             invalid(check, "either check command or extension must be set")
           must_be_a_numeric_if_set(check[:timeout]) ||
             invalid(check, "check timeout must be numeric")
+          must_be_boolean_if_set(check[:stdin]) ||
+            invalid(check, "check stdin must be boolean")
         end
 
         # Validate check source.

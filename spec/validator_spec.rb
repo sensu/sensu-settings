@@ -280,6 +280,15 @@ describe "Sensu::Settings::Validator" do
     check[:source] = "switch-42"
     @validator.validate_check(check)
     expect(@validator.reset).to eq(0)
+    check[:stdin] = 1
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
+    check[:stdin] = false
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(0)
+    check[:stdin] = true
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(0)
     check[:extension] = 'foo'
     @validator.validate_check(check)
     expect(@validator.reset).to eq(1)
