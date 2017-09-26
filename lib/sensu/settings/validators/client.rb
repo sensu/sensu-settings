@@ -40,7 +40,7 @@ module Sensu
         end
 
         # Validate client http_socket.
-        # Validates: http_socket (bind, port, user, password)
+        # Validates: http_socket (enabled, bind, port, user, password, protect_all_endpoints)
         #
         # @param client [Hash] sensu client definition.
         def validate_client_http_socket(client)
@@ -60,6 +60,8 @@ module Sensu
               must_be_a_string(http_socket[:password]) ||
                 invalid(client, "client http_socket password must be a string")
             end
+            must_be_boolean_if_set(http_socket[:protect_all_endpoints]) ||
+              invalid(client, "client http_socket protect_all_endpoints must be boolean")
           end
         end
 

@@ -915,6 +915,15 @@ describe "Sensu::Settings::Validator" do
     client[:http_socket][:password] = "bar"
     @validator.validate_client(client)
     expect(@validator.reset).to eq(0)
+    client[:http_socket][:protect_all_endpoints] = 1
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(1)
+    client[:http_socket][:protect_all_endpoints] = false
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(0)
+    client[:http_socket][:protect_all_endpoints] = true
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(0)
   end
 
   it "can validate client keepalives" do
