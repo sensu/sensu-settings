@@ -1,7 +1,54 @@
 # Change Log
 
+## [v10.9.0](https://github.com/sensu/sensu-settings/tree/v10.9.0) (2017-09-27)
+[Full Changelog](https://github.com/sensu/sensu-settings/compare/v10.8.0...v10.9.0)
+
+**Merged pull requests:**
+
+- Validate check proxy\_requests splay and splay\_coverage [\#79](https://github.com/sensu/sensu-settings/pull/79) ([portertech](https://github.com/portertech))
+
+## [v10.8.0](https://github.com/sensu/sensu-settings/tree/v10.8.0) (2017-09-26)
+[Full Changelog](https://github.com/sensu/sensu-settings/compare/v10.7.0...v10.8.0)
+
+**Merged pull requests:**
+
+- Validate check stdin [\#78](https://github.com/sensu/sensu-settings/pull/78) ([portertech](https://github.com/portertech))
+
+## [v10.7.0](https://github.com/sensu/sensu-settings/tree/v10.7.0) (2017-09-26)
+[Full Changelog](https://github.com/sensu/sensu-settings/compare/v10.6.0...v10.7.0)
+
+**Merged pull requests:**
+
+- Validate client http\_socket protect\_all\_endpoints [\#77](https://github.com/sensu/sensu-settings/pull/77) ([portertech](https://github.com/portertech))
+
+## [v10.6.0](https://github.com/sensu/sensu-settings/tree/v10.6.0) (2017-09-25)
+[Full Changelog](https://github.com/sensu/sensu-settings/compare/v10.5.0...v10.6.0)
+
+**Merged pull requests:**
+
+- Validate check output truncate [\#76](https://github.com/sensu/sensu-settings/pull/76) ([portertech](https://github.com/portertech))
+
+## [v10.5.0](https://github.com/sensu/sensu-settings/tree/v10.5.0) (2017-09-25)
+[Full Changelog](https://github.com/sensu/sensu-settings/compare/v10.4.0...v10.5.0)
+
+**Merged pull requests:**
+
+- Validate check hook stdin [\#75](https://github.com/sensu/sensu-settings/pull/75) ([portertech](https://github.com/portertech))
+
+## [v10.4.0](https://github.com/sensu/sensu-settings/tree/v10.4.0) (2017-09-22)
+[Full Changelog](https://github.com/sensu/sensu-settings/compare/v10.3.0...v10.4.0)
+
+**Merged pull requests:**
+
+- Validate Check Hooks [\#74](https://github.com/sensu/sensu-settings/pull/74) ([portertech](https://github.com/portertech))
+- Implement automated changelog generation [\#73](https://github.com/sensu/sensu-settings/pull/73) ([cwjohnston](https://github.com/cwjohnston))
+
 ## [v10.3.0](https://github.com/sensu/sensu-settings/tree/v10.3.0) (2017-07-24)
 [Full Changelog](https://github.com/sensu/sensu-settings/compare/v10.2.0...v10.3.0)
+
+**Closed issues:**
+
+- Validation failing to catch invalid check interval  [\#69](https://github.com/sensu/sensu-settings/issues/69)
 
 **Merged pull requests:**
 
@@ -17,12 +64,20 @@
 ## [v10.1.0](https://github.com/sensu/sensu-settings/tree/v10.1.0) (2017-06-09)
 [Full Changelog](https://github.com/sensu/sensu-settings/compare/v10.0.0...v10.1.0)
 
+**Closed issues:**
+
+- Sensu client keepalive validation is "weak" [\#68](https://github.com/sensu/sensu-settings/issues/68)
+
 **Merged pull requests:**
 
 - Improved client keepalive validation [\#70](https://github.com/sensu/sensu-settings/pull/70) ([portertech](https://github.com/portertech))
 
 ## [v10.0.0](https://github.com/sensu/sensu-settings/tree/v10.0.0) (2017-03-19)
 [Full Changelog](https://github.com/sensu/sensu-settings/compare/v9.10.0...v10.0.0)
+
+**Closed issues:**
+
+- Need to decouple settings loading from state file management i.e. sensu\_server\_loaded\_files [\#57](https://github.com/sensu/sensu-settings/issues/57)
 
 **Merged pull requests:**
 
@@ -31,6 +86,10 @@
 
 ## [v9.10.0](https://github.com/sensu/sensu-settings/tree/v9.10.0) (2017-03-19)
 [Full Changelog](https://github.com/sensu/sensu-settings/compare/v9.9.0...v9.10.0)
+
+**Closed issues:**
+
+- Socket.gethostname returns FQDN in RHEL 7 [\#61](https://github.com/sensu/sensu-settings/issues/61)
 
 **Merged pull requests:**
 
@@ -55,12 +114,21 @@
 ## [v9.7.0](https://github.com/sensu/sensu-settings/tree/v9.7.0) (2017-02-15)
 [Full Changelog](https://github.com/sensu/sensu-settings/compare/v9.6.0...v9.7.0)
 
+**Closed issues:**
+
+- Unable to restart sensu with broken sym links in config dir [\#56](https://github.com/sensu/sensu-settings/issues/56)
+- Installations can delete /tmp/sensu\_server\_loaded\_files, causing handlers to silently fail [\#21](https://github.com/sensu/sensu-settings/issues/21)
+
 **Merged pull requests:**
 
 - Validate check proxy requests [\#58](https://github.com/sensu/sensu-settings/pull/58) ([portertech](https://github.com/portertech))
 
 ## [v9.6.0](https://github.com/sensu/sensu-settings/tree/v9.6.0) (2016-11-22)
 [Full Changelog](https://github.com/sensu/sensu-settings/compare/v9.5.0...v9.6.0)
+
+**Closed issues:**
+
+- Add client http\_socket configuration validation [\#51](https://github.com/sensu/sensu-settings/issues/51)
 
 **Merged pull requests:**
 
@@ -90,12 +158,20 @@
 ## [v9.2.2](https://github.com/sensu/sensu-settings/tree/v9.2.2) (2016-10-24)
 [Full Changelog](https://github.com/sensu/sensu-settings/compare/v9.2.1...v9.2.2)
 
+**Closed issues:**
+
+- Loading an empty file causes an error [\#49](https://github.com/sensu/sensu-settings/issues/49)
+
 **Merged pull requests:**
 
 - \[loader\] treat empty json files as an empty hash [\#50](https://github.com/sensu/sensu-settings/pull/50) ([cwjohnston](https://github.com/cwjohnston))
 
 ## [v9.2.1](https://github.com/sensu/sensu-settings/tree/v9.2.1) (2016-10-12)
 [Full Changelog](https://github.com/sensu/sensu-settings/compare/v9.2.0...v9.2.1)
+
+**Closed issues:**
+
+- sensu-client incorrectly reports a fatal error indicating subscriptions is not an array [\#47](https://github.com/sensu/sensu-settings/issues/47)
 
 **Merged pull requests:**
 
@@ -117,6 +193,10 @@
 
 ## [v9.1.1](https://github.com/sensu/sensu-settings/tree/v9.1.1) (2016-09-07)
 [Full Changelog](https://github.com/sensu/sensu-settings/compare/v9.1.0...v9.1.1)
+
+**Fixed bugs:**
+
+- Server processes fail to start without `client` configuration [\#44](https://github.com/sensu/sensu-settings/issues/44)
 
 **Merged pull requests:**
 
@@ -150,6 +230,10 @@
 ## [v6.0.0](https://github.com/sensu/sensu-settings/tree/v6.0.0) (2016-07-20)
 [Full Changelog](https://github.com/sensu/sensu-settings/compare/v5.2.0...v6.0.0)
 
+**Closed issues:**
+
+- Named aggregates with token substitution fails [\#35](https://github.com/sensu/sensu-settings/issues/35)
+
 **Merged pull requests:**
 
 - update aggregate validation regex to enable use with token subsitution [\#38](https://github.com/sensu/sensu-settings/pull/38) ([cwjohnston](https://github.com/cwjohnston))
@@ -173,6 +257,12 @@
 
 ## [v5.0.1](https://github.com/sensu/sensu-settings/tree/v5.0.1) (2016-05-30)
 [Full Changelog](https://github.com/sensu/sensu-settings/compare/v5.0.0...v5.0.1)
+
+**Closed issues:**
+
+- Add ability to specify `filters` for extension handlers in configuration [\#30](https://github.com/sensu/sensu-settings/issues/30)
+- Invalid Gem v3.3.0 test suite [\#25](https://github.com/sensu/sensu-settings/issues/25)
+- Provide context for "handlers must be a hash" error [\#22](https://github.com/sensu/sensu-settings/issues/22)
 
 **Merged pull requests:**
 
@@ -219,6 +309,10 @@
 ## [v3.2.0](https://github.com/sensu/sensu-settings/tree/v3.2.0) (2016-01-28)
 [Full Changelog](https://github.com/sensu/sensu-settings/compare/v3.1.0...v3.2.0)
 
+**Closed issues:**
+
+- Enable Sourcegraph [\#15](https://github.com/sensu/sensu-settings/issues/15)
+
 **Merged pull requests:**
 
 - Validate client signature [\#23](https://github.com/sensu/sensu-settings/pull/23) ([portertech](https://github.com/portertech))
@@ -233,6 +327,10 @@
 
 ## [v3.0.0](https://github.com/sensu/sensu-settings/tree/v3.0.0) (2015-07-09)
 [Full Changelog](https://github.com/sensu/sensu-settings/compare/v2.0.0...v3.0.0)
+
+**Closed issues:**
+
+- Application-independent settings [\#3](https://github.com/sensu/sensu-settings/issues/3)
 
 **Merged pull requests:**
 
