@@ -88,13 +88,22 @@ module Sensu
         end
 
         # Validate check proxy requests.
-        # Validates: proxy_requests
+        # Validates: proxy_requests (client_attributes, splay, splay_coverage)
         #
         # @param check [Hash] sensu check definition.
         def validate_check_proxy_requests(check)
           if is_a_hash?(check[:proxy_requests])
-            must_be_a_hash(check[:proxy_requests][:client_attributes]) ||
+            proxy_requests = check[:proxy_requests]
+            must_be_a_hash(proxy_requests[:client_attributes]) ||
               invalid(check, "check proxy_requests client_attributes must be a hash")
+            must_be_boolean_if_set(proxy_requests[:splay]) ||
+              invalid(check, "check proxy_requests splay must be boolean")
+            if proxy_requests[:splay_coverage]
+              (must_be_an_integer(proxy_requests[:splay_coverage]) &&
+                proxy_requests[:splay_coverage] > 0 &&
+                proxy_requests[:splay_coverage] < 100) ||
+                invalid(check, "check proxy_requests splay_coverage must be an integer greater than 0 and less than 100")
+            end
           else
             invalid(check, "check proxy_requests must be a hash")
           end
