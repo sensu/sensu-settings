@@ -181,6 +181,27 @@ describe "Sensu::Settings::Validator" do
     check[:proxy_requests] = {:client_attributes => {}}
     @validator.validate_check(check)
     expect(@validator.reset).to eq(0)
+    check[:proxy_requests] = {:client_attributes => {}, :splay => 1}
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
+    check[:proxy_requests] = {:client_attributes => {}, :splay => false}
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(0)
+    check[:proxy_requests] = {:client_attributes => {}, :splay => true}
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(0)
+    check[:proxy_requests] = {:client_attributes => {}, :splay => true, :splay_coverage => true}
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
+    check[:proxy_requests] = {:client_attributes => {}, :splay => true, :splay_coverage => -1}
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
+    check[:proxy_requests] = {:client_attributes => {}, :splay => true, :splay_coverage => 100}
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
+    check[:proxy_requests] = {:client_attributes => {}, :splay => true, :splay_coverage => 65}
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(0)
     check[:standalone] = "true"
     @validator.validate_check(check)
     expect(@validator.reset).to eq(1)
