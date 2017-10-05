@@ -34,17 +34,53 @@ describe "Sensu::Settings::Validator" do
     expect(@validator.reset).to eq(1)
     sensu = {}
     @validator.validate_sensu(sensu)
-    expect(@validator.reset).to eq(1)
+    expect(@validator.reset).to eq(2)
     sensu[:spawn] = 1
     @validator.validate_sensu(sensu)
-    expect(@validator.reset).to eq(1)
+    expect(@validator.reset).to eq(2)
     sensu[:spawn] = {}
     @validator.validate_sensu(sensu)
-    expect(@validator.reset).to eq(1)
+    expect(@validator.reset).to eq(2)
     sensu[:spawn][:limit] = "1"
     @validator.validate_sensu(sensu)
-    expect(@validator.reset).to eq(1)
+    expect(@validator.reset).to eq(2)
     sensu[:spawn][:limit] = 20
+    @validator.validate_sensu(sensu)
+    expect(@validator.reset).to eq(1)
+    sensu[:keepalives] = {}
+    @validator.validate_sensu(sensu)
+    expect(@validator.reset).to eq(0)
+    sensu[:keepalives][:thresholds] = true
+    @validator.validate_sensu(sensu)
+    expect(@validator.reset).to eq(1)
+    sensu[:keepalives][:thresholds] = {}
+    @validator.validate_sensu(sensu)
+    expect(@validator.reset).to eq(0)
+    sensu[:keepalives][:thresholds][:warning] = "60"
+    @validator.validate_sensu(sensu)
+    expect(@validator.reset).to eq(1)
+    sensu[:keepalives][:thresholds][:warning] = 60
+    @validator.validate_sensu(sensu)
+    expect(@validator.reset).to eq(0)
+    sensu[:keepalives][:thresholds][:critical] = "80"
+    @validator.validate_sensu(sensu)
+    expect(@validator.reset).to eq(1)
+    sensu[:keepalives][:thresholds][:critical] = 80
+    @validator.validate_sensu(sensu)
+    expect(@validator.reset).to eq(0)
+    sensu[:keepalives][:handler] = 1
+    @validator.validate_sensu(sensu)
+    expect(@validator.reset).to eq(1)
+    sensu[:keepalives][:handler] = "foo"
+    @validator.validate_sensu(sensu)
+    expect(@validator.reset).to eq(0)
+    sensu[:keepalives][:handlers] = 1
+    @validator.validate_sensu(sensu)
+    expect(@validator.reset).to eq(1)
+    sensu[:keepalives][:handlers] = [1]
+    @validator.validate_sensu(sensu)
+    expect(@validator.reset).to eq(1)
+    sensu[:keepalives][:handlers] = ["foo"]
     @validator.validate_sensu(sensu)
     expect(@validator.reset).to eq(0)
   end
@@ -58,8 +94,11 @@ describe "Sensu::Settings::Validator" do
       }
     }
     @validator.run(settings)
-    expect(@validator.reset).to eq(7)
+    expect(@validator.reset).to eq(8)
     settings[:sensu][:spawn][:limit] = 20
+    @validator.run(settings)
+    expect(@validator.reset).to eq(7)
+    settings[:sensu][:keepalives] = {}
     @validator.run(settings)
     expect(@validator.reset).to eq(6)
   end

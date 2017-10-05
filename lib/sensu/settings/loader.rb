@@ -56,6 +56,12 @@ module Sensu
           :sensu => {
             :spawn => {
               :limit => 12
+            },
+            :keepalives => {
+              :thresholds => {
+                :warning => 120,
+                :critical => 180
+              }
             }
           },
           :transport => {
