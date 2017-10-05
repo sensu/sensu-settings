@@ -47,7 +47,8 @@ module Sensu
       private
 
       # Validate setting categories: checks, filters, mutators, and
-      # handlers.
+      # handlers. This method also validates each object type,
+      # ensuring that they are hashes.
       #
       # @param settings [Hash] sensu settings to validate.
       def validate_categories(settings)
@@ -55,7 +56,12 @@ module Sensu
           if is_a_hash?(settings[category])
             validate_method = ("validate_" + category.to_s.chop).to_sym
             settings[category].each do |name, details|
-              send(validate_method, details.merge(:name => name.to_s))
+              if details.is_a?(Hash)
+                send(validate_method, details.merge(:name => name.to_s))
+              else
+                object_type = category[0..-2]
+                invalid(details, "#{object_type} must be a hash")
+              end
             end
           else
             invalid(settings[category], "#{category} must be a hash")

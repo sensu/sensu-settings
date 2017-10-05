@@ -25,6 +25,16 @@ describe "Sensu::Settings::Validator" do
     expect(reasons.size).to eq(7)
   end
 
+  it "can run, validating setting category object types" do
+    failures = @validator.run({
+      :checks => {
+        :foo => ["invalid"]
+      }
+    })
+    expect(failures).to be_kind_of(Array)
+    expect(failures).to include({:object => ["invalid"], :message => "check must be a hash"})
+  end
+
   it "can validate a sensu definition" do
     sensu = nil
     @validator.validate_sensu(sensu)
