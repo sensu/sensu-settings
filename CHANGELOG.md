@@ -1,5 +1,12 @@
 # Change Log
 
+## [v10.10.0](https://github.com/sensu/sensu-settings/tree/v10.10.0) (2017-10-05)
+[Full Changelog](https://github.com/sensu/sensu-settings/compare/v10.9.0...v10.10.0)
+
+**Merged pull requests:**
+
+- Validate sensu keepalives, default keepalives thresholds [\#80](https://github.com/sensu/sensu-settings/pull/80) ([portertech](https://github.com/portertech))
+
 ## [v10.9.0](https://github.com/sensu/sensu-settings/tree/v10.9.0) (2017-09-27)
 [Full Changelog](https://github.com/sensu/sensu-settings/compare/v10.8.0...v10.9.0)
 
