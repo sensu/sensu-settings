@@ -20,13 +20,59 @@ module Sensu
           end
         end
 
+        # Validate Sensu keepalives thresholds.
+        # Validates: warning, critical
+        #
+        # @param sensu [Hash] sensu definition.
+        def validate_sensu_keepalives_thresholds(sensu)
+          thresholds = sensu[:keepalives][:thresholds]
+          must_be_a_hash_if_set(thresholds) ||
+            invalid(sensu, "sensu keepalives thresholds must be a hash")
+          if is_a_hash?(thresholds)
+            must_be_an_integer_if_set(thresholds[:warning]) ||
+              invalid(sensu, "sensu keepalives warning threshold must be an integer")
+            must_be_an_integer_if_set(thresholds[:critical]) ||
+              invalid(sensu, "sensu keepalives critical threshold must be an integer")
+          end
+        end
+
+        # Validate Sensu keepalives handlers.
+        # Validates: handler, handlers
+        #
+        # @param sensu [Hash] sensu definition.
+        def validate_sensu_keepalives_handlers(sensu)
+          must_be_a_string_if_set(sensu[:keepalives][:handler]) ||
+            invalid(sensu, "sensu keepalives handler must be a string")
+          must_be_an_array_if_set(sensu[:keepalives][:handlers]) ||
+            invalid(sensu, "sensu keepalives handlers must be an array")
+          if is_an_array?(sensu[:keepalives][:handlers])
+            items_must_be_strings(sensu[:keepalives][:handlers]) ||
+              invalid(sensu, "sensu keepalives handlers must each be a string")
+          end
+        end
+
+
+        # Validate Sensu keepalives.
+        # Validates: thresholds (warning, critical), handler, handlers
+        #
+        # @param sensu [Hash] sensu definition.
+        def validate_sensu_keepalives(sensu)
+          if is_a_hash?(sensu[:keepalives])
+            validate_sensu_keepalives_thresholds(sensu)
+            validate_sensu_keepalives_handlers(sensu)
+          else
+            invalid(sensu, "sensu keepalives must be a hash")
+          end
+        end
+
         # Validate a Sensu definition.
-        # Validates: spawn
+        # Validates: spawn, keepalives
         #
         # @param sensu [Hash] sensu definition.
         def validate_sensu(sensu)
           if is_a_hash?(sensu)
             validate_sensu_spawn(sensu)
+            validate_sensu_keepalives(sensu)
           else
             invalid(sensu, "sensu must be a hash")
           end
