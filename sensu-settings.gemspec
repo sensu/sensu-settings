@@ -16,6 +16,8 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "sensu-json", ">= 1.1.0"
+  spec.add_dependency "etcd"
+  spec.add_dependency "diplomat"
   spec.add_dependency "parse-cron"
 
   spec.add_development_dependency "bundler", "~> 1.6"
