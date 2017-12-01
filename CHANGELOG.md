@@ -1,5 +1,13 @@
 # Change Log
 
+## [v10.11.0](https://github.com/sensu/sensu-settings/tree/v10.11.0) (2017-12-01)
+[Full Changelog](https://github.com/sensu/sensu-settings/compare/v10.10.0...v10.11.0)
+
+**Merged pull requests:**
+
+- Token Substitution Support for Check Source [\#84](https://github.com/sensu/sensu-settings/pull/84) ([portertech](https://github.com/portertech))
+- Validate setting category object types [\#81](https://github.com/sensu/sensu-settings/pull/81) ([portertech](https://github.com/portertech))
+
 ## [v10.10.0](https://github.com/sensu/sensu-settings/tree/v10.10.0) (2017-10-05)
 [Full Changelog](https://github.com/sensu/sensu-settings/compare/v10.9.0...v10.10.0)
 
