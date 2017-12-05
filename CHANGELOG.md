@@ -1,5 +1,16 @@
 # Change Log
 
+## [v10.12.0](https://github.com/sensu/sensu-settings/tree/v10.12.0) (2017-12-05)
+[Full Changelog](https://github.com/sensu/sensu-settings/compare/v10.11.0...v10.12.0)
+
+**Closed issues:**
+
+- Read configuration from key-value store [\#82](https://github.com/sensu/sensu-settings/issues/82)
+
+**Merged pull requests:**
+
+- Improve check source token validation [\#85](https://github.com/sensu/sensu-settings/pull/85) ([portertech](https://github.com/portertech))
+
 ## [v10.11.0](https://github.com/sensu/sensu-settings/tree/v10.11.0) (2017-12-01)
 [Full Changelog](https://github.com/sensu/sensu-settings/compare/v10.10.0...v10.11.0)
 
