@@ -353,6 +353,9 @@ describe "Sensu::Settings::Validator" do
     check[:source] = "to:ken"
     @validator.validate_check(check)
     expect(@validator.reset).to eq(1)
+    check[:source] = "to:::ken"
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(1)
     check[:source] = "::token::"
     @validator.validate_check(check)
     expect(@validator.reset).to eq(1)
@@ -366,6 +369,12 @@ describe "Sensu::Settings::Validator" do
     @validator.validate_check(check)
     expect(@validator.reset).to eq(0)
     check[:source] = ":::token|default:::"
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(0)
+    check[:source] = "my:::token|default:::"
+    @validator.validate_check(check)
+    expect(@validator.reset).to eq(0)
+    check[:source] = "my:::token|default:::value"
     @validator.validate_check(check)
     expect(@validator.reset).to eq(0)
     check[:stdin] = 1
