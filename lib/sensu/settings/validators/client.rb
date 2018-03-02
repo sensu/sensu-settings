@@ -25,13 +25,15 @@ module Sensu
         end
 
         # Validate client socket.
-        # Validates: socket (bind, port)
+        # Validates: socket (enabled, bind, port)
         #
         # @param client [Hash] sensu client definition.
         def validate_client_socket(client)
           must_be_a_hash_if_set(client[:socket]) ||
             invalid(client, "client socket must be a hash")
           if is_a_hash?(client[:socket])
+            must_be_boolean_if_set(client[:socket][:enabled]) ||
+              invalid(client, "client socket enabled must be a boolean")
             must_be_a_string_if_set(client[:socket][:bind]) ||
               invalid(client, "client socket bind must be a string")
             must_be_an_integer_if_set(client[:socket][:port]) ||
