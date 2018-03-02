@@ -957,6 +957,18 @@ describe "Sensu::Settings::Validator" do
     client[:socket] = {}
     @validator.validate_client(client)
     expect(@validator.reset).to eq(0)
+    client[:socket][:enabled] = 1
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(1)
+    client[:socket][:enabled] = "true"
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(1)
+    client[:socket][:enabled] = false
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(0)
+    client[:socket][:enabled] = true
+    @validator.validate_client(client)
+    expect(@validator.reset).to eq(0)
     client[:socket][:bind] = true
     @validator.validate_client(client)
     expect(@validator.reset).to eq(1)
