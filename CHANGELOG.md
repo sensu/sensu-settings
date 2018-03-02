@@ -1,5 +1,12 @@
 # Change Log
 
+## [v10.13.0](https://github.com/sensu/sensu-settings/tree/v10.13.0) (2018-03-02)
+[Full Changelog](https://github.com/sensu/sensu-settings/compare/v10.12.0...v10.13.0)
+
+**Merged pull requests:**
+
+- Validate Sensu client socket "enabled" [\#87](https://github.com/sensu/sensu-settings/pull/87) ([portertech](https://github.com/portertech))
+
 ## [v10.12.0](https://github.com/sensu/sensu-settings/tree/v10.12.0) (2017-12-05)
 [Full Changelog](https://github.com/sensu/sensu-settings/compare/v10.11.0...v10.12.0)
 
