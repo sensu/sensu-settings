@@ -1,8 +1,7 @@
 # Change Log
 
-## [Unreleased](https://github.com/sensu/sensu-settings/tree/HEAD)
-
-[Full Changelog](https://github.com/sensu/sensu-settings/compare/v10.13.0...HEAD)
+## [v10.13.1](https://github.com/sensu/sensu-settings/tree/v10.13.1) (2018-03-07)
+[Full Changelog](https://github.com/sensu/sensu-settings/compare/v10.13.0...v10.13.1)
 
 **Merged pull requests:**
 
