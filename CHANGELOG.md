@@ -1,5 +1,13 @@
 # Change Log
 
+## [Unreleased](https://github.com/sensu/sensu-settings/tree/HEAD)
+
+[Full Changelog](https://github.com/sensu/sensu-settings/compare/v10.13.0...HEAD)
+
+**Merged pull requests:**
+
+- Sign the sensu-settings Ruby gem [\#88](https://github.com/sensu/sensu-settings/pull/88) ([portertech](https://github.com/portertech))
+
 ## [v10.13.0](https://github.com/sensu/sensu-settings/tree/v10.13.0) (2018-03-02)
 [Full Changelog](https://github.com/sensu/sensu-settings/compare/v10.12.0...v10.13.0)
 
