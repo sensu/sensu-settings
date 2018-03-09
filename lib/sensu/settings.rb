@@ -20,6 +20,9 @@ module Sensu
       def load(options={})
         loader = Loader.new
         loader.load_env
+        if options[:kv_type] and options[:kv_url]
+          loader.load_kv(options[:kv_type], options[:kv_url], options[:kv_chroot], options[:kv_auth])
+        end
         if options[:config_file]
           loader.load_file(options[:config_file], false)
         end

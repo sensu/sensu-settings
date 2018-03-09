@@ -1,3 +1,4 @@
+require "sensu/settings/key_value"
 require "sensu/settings/validator"
 require "sensu/json"
 require "tmpdir"
@@ -134,6 +135,37 @@ module Sensu
             end
           end
           @hexdigest = Digest::SHA256.hexdigest(hash.to_s)
+        end
+      end
+
+      # Load settings from remote key-value store
+      #
+      # @param [String] key-value type
+      # @param [String] key-value url
+      # @param [String] key-value configuration root path
+      # @param [String] key-value authentication token (string) or options json-serialized
+      def load_kv(kv_type, url, chroot="/", auth=nil)
+        Sensu::Settings::KeyValue.type   ||= kv_type
+        Sensu::Settings::KeyValue.url    ||= url
+        Sensu::Settings::KeyValue.chroot ||= chroot
+        Sensu::Settings::KeyValue.auth   ||= auth
+
+        begin
+          merged = deep_merge(@settings, Sensu::Settings::KeyValue.read || {})
+          changes = deep_diff(@settings, merged)
+          if changes.keys.count > 0
+            warning("config from #{Sensu::Settings::KeyValue.type} key-value #{Sensu::Settings::KeyValue.url} at chroot #{Sensu::Settings::KeyValue.chroot} applied changes", {
+              :changes => changes
+            })
+          end
+          @settings = merged
+          @indifferent_access = false
+        rescue Sensu::JSON::ParseError => error
+          load_error("config from key-value store must be valid json", {
+            :url => url,
+            :chroot => chroot,
+            :type => kv_type,
+          })
         end
       end
 
