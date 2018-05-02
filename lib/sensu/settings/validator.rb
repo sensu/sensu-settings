@@ -26,6 +26,8 @@ module Sensu
         validate_transport(settings[:transport])
         validate_categories(settings)
         case service
+        when "server"
+          validate_tessen(settings[:tessen])
         when "client"
           validate_client(settings[:client])
         when "api"
