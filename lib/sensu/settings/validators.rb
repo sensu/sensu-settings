@@ -1,4 +1,5 @@
 require "sensu/settings/validators/sensu"
+require "sensu/settings/validators/tessen"
 require "sensu/settings/validators/transport"
 require "sensu/settings/validators/time_window"
 require "sensu/settings/validators/check"
@@ -13,6 +14,7 @@ module Sensu
   module Settings
     module Validators
       include Sensu
+      include Tessen
       include Transport
       include TimeWindow
       include Check
