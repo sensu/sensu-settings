@@ -1,5 +1,17 @@
 # Change Log
 
+## [Unreleased](https://github.com/sensu/sensu-settings/tree/HEAD)
+
+[Full Changelog](https://github.com/sensu/sensu-settings/compare/v10.13.1...HEAD)
+
+**Closed issues:**
+
+- Add validation for client socket "enabled" [\#86](https://github.com/sensu/sensu-settings/issues/86)
+
+**Merged pull requests:**
+
+- Validate Tessen settings [\#89](https://github.com/sensu/sensu-settings/pull/89) ([portertech](https://github.com/portertech))
+
 ## [v10.13.1](https://github.com/sensu/sensu-settings/tree/v10.13.1) (2018-03-07)
 [Full Changelog](https://github.com/sensu/sensu-settings/compare/v10.13.0...v10.13.1)
 
