@@ -113,6 +113,53 @@ describe "Sensu::Settings::Validator" do
     expect(@validator.reset).to eq(6)
   end
 
+  it "can validate a tessen definition" do
+    tessen = nil
+    @validator.validate_tessen(tessen)
+    expect(@validator.reset).to eq(0)
+    tessen = true
+    @validator.validate_tessen(tessen)
+    expect(@validator.reset).to eq(1)
+    tessen = {}
+    @validator.validate_tessen(tessen)
+    expect(@validator.reset).to eq(0)
+    tessen[:enabled] = 1
+    @validator.validate_tessen(tessen)
+    expect(@validator.reset).to eq(1)
+    tessen[:enabled] = false
+    @validator.validate_tessen(tessen)
+    expect(@validator.reset).to eq(0)
+    tessen[:enabled] = true
+    @validator.validate_tessen(tessen)
+    expect(@validator.reset).to eq(0)
+    tessen[:identity_key] = true
+    @validator.validate_tessen(tessen)
+    expect(@validator.reset).to eq(1)
+    tessen[:identity_key] = 1
+    @validator.validate_tessen(tessen)
+    expect(@validator.reset).to eq(1)
+    tessen[:identity_key] = "foo"
+    @validator.validate_tessen(tessen)
+    expect(@validator.reset).to eq(0)
+  end
+
+  it "can run, validating tessen" do
+    settings = {
+      :tessen => {
+        :enabled => 1,
+        :identity_key => 1
+      }
+    }
+    @validator.run(settings, "server")
+    expect(@validator.reset).to eq(9)
+    settings[:tessen][:enabled] = true
+    @validator.run(settings, "server")
+    expect(@validator.reset).to eq(8)
+    settings[:tessen][:identity_key] = "foo"
+    @validator.run(settings, "server")
+    expect(@validator.reset).to eq(7)
+  end
+
   it "can validate a transport definition" do
     transport = nil
     @validator.validate_transport(transport)

@@ -13,7 +13,7 @@ module Sensu
             must_be_boolean_if_set(tessen[:enabled]) ||
               invalid(tessen, "tessen enabled must be boolean")
             must_be_a_string_if_set(tessen[:identity_key]) ||
-              invalid(check, "tessen identity_key must be a string")
+              invalid(tessen, "tessen identity_key must be a string")
           end
         end
       end
