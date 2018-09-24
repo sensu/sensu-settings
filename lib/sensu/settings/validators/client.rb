@@ -9,7 +9,7 @@ module Sensu
         def validate_client_subscriptions(client)
           if is_an_array?(client[:subscriptions])
             items_must_be_strings(client[:subscriptions]) ||
-              invalid(client, "client subscriptions must each be a string")
+              invalid(client, "client subscriptions must each be a non empty string")
           else
             invalid(client, "client subscriptions must be an array")
           end
