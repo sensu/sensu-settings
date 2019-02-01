@@ -73,6 +73,8 @@ module Sensu
           if is_a_hash?(sensu)
             validate_sensu_spawn(sensu)
             validate_sensu_keepalives(sensu)
+            must_be_boolean_if_set(sensu[:global_error_handler]) ||
+              invalid(sensu, "sensu global_error_handler must be boolean")
           else
             invalid(sensu, "sensu must be a hash")
           end
