@@ -93,6 +93,15 @@ describe "Sensu::Settings::Validator" do
     sensu[:keepalives][:handlers] = ["foo"]
     @validator.validate_sensu(sensu)
     expect(@validator.reset).to eq(0)
+    sensu[:global_error_handler] = 1
+    @validator.validate_sensu(sensu)
+    expect(@validator.reset).to eq(1)
+    sensu[:global_error_handler] = false
+    @validator.validate_sensu(sensu)
+    expect(@validator.reset).to eq(0)
+    sensu[:global_error_handler] = true
+    @validator.validate_sensu(sensu)
+    expect(@validator.reset).to eq(0)
   end
 
   it "can run, validating sensu" do
