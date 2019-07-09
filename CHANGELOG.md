@@ -2,7 +2,14 @@
 
 ## [Unreleased](https://github.com/sensu/sensu-settings/tree/HEAD)
 
-[Full Changelog](https://github.com/sensu/sensu-settings/compare/v10.14.0...HEAD)
+[Full Changelog](https://github.com/sensu/sensu-settings/compare/v10.15.0...HEAD)
+
+**Merged pull requests:**
+
+- Validate Sensu server results\_pipe and keepalives\_pipe [\#92](https://github.com/sensu/sensu-settings/pull/92) ([portertech](https://github.com/portertech))
+
+## [v10.15.0](https://github.com/sensu/sensu-settings/tree/v10.15.0) (2019-02-18)
+[Full Changelog](https://github.com/sensu/sensu-settings/compare/v10.14.0...v10.15.0)
 
 **Merged pull requests:**
 
