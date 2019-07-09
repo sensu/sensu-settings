@@ -120,6 +120,24 @@ describe "Sensu::Settings::Validator" do
     settings[:sensu][:keepalives] = {}
     @validator.run(settings)
     expect(@validator.reset).to eq(6)
+    settings[:sensu][:server] = "foo"
+    @validator.run(settings)
+    expect(@validator.reset).to eq(7)
+    settings[:sensu][:server] = {}
+    @validator.run(settings)
+    expect(@validator.reset).to eq(6)
+    settings[:sensu][:server][:results_pipe] = 1
+    @validator.run(settings)
+    expect(@validator.reset).to eq(7)
+    settings[:sensu][:server][:results_pipe] = "foo"
+    @validator.run(settings)
+    expect(@validator.reset).to eq(6)
+    settings[:sensu][:server][:keepalives_pipe] = 1
+    @validator.run(settings)
+    expect(@validator.reset).to eq(7)
+    settings[:sensu][:server][:keepalives_pipe] = "bar"
+    @validator.run(settings)
+    expect(@validator.reset).to eq(6)
   end
 
   it "can validate a tessen definition" do
