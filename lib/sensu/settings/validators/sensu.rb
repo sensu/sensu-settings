@@ -65,6 +65,21 @@ module Sensu
           end
         end
 
+        # Validate Sensu server.
+        # Validates: server results_pipe, keepalives_pipe
+        #
+        # @param sensu [Hash] sensu definition.
+        def validate_sensu_server(sensu)
+          if is_a_hash?(sensu[:server])
+            must_be_a_string_if_set(sensu[:server][:results_pipe]) ||
+              invalid(sensu, "sensu server results_pipe must be a string")
+            must_be_a_string_if_set(sensu[:server][:keepalives_pipe]) ||
+              invalid(sensu, "sensu server keepalives_pipe must be a string")
+          else
+            invalid(sensu, "sensu server must be a hash")
+          end
+        end
+
         # Validate a Sensu definition.
         # Validates: spawn, keepalives
         #
@@ -73,6 +88,7 @@ module Sensu
           if is_a_hash?(sensu)
             validate_sensu_spawn(sensu)
             validate_sensu_keepalives(sensu)
+            validate_sensu_server(sensu) if sensu[:server]
             must_be_boolean_if_set(sensu[:global_error_handler]) ||
               invalid(sensu, "sensu global_error_handler must be boolean")
           else
