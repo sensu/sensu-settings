@@ -51,7 +51,6 @@ module Sensu
           end
         end
 
-
         # Validate Sensu keepalives.
         # Validates: thresholds (warning, critical), handler, handlers
         #
@@ -75,6 +74,8 @@ module Sensu
               invalid(sensu, "sensu server results_pipe must be a string")
             must_be_a_string_if_set(sensu[:server][:keepalives_pipe]) ||
               invalid(sensu, "sensu server keepalives_pipe must be a string")
+            must_be_an_integer_if_set(sensu[:server][:max_message_size]) ||
+              invalid(sensu, "sensu server max_message_size must be an integer")
           else
             invalid(sensu, "sensu server must be a hash")
           end

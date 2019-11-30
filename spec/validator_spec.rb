@@ -138,6 +138,12 @@ describe "Sensu::Settings::Validator" do
     settings[:sensu][:server][:keepalives_pipe] = "bar"
     @validator.run(settings)
     expect(@validator.reset).to eq(6)
+    settings[:sensu][:server][:max_message_size] = "42"
+    @validator.run(settings)
+    expect(@validator.reset).to eq(7)
+    settings[:sensu][:server][:max_message_size] = 42
+    @validator.run(settings)
+    expect(@validator.reset).to eq(6)
   end
 
   it "can validate a tessen definition" do
